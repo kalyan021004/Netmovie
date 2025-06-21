@@ -1,0 +1,59 @@
+<div class="mb-3">
+  <label class="form-label">Title</label>
+  <input
+    type="text"
+    name="title"
+    class="form-control"
+    value="<%= movie?.title || '' %>"
+    required
+  />
+</div>
+
+<div class="mb-3">
+  <label class="form-label">Year</label>
+  <input
+    type="number"
+    name="year"
+    class="form-control"
+    value="<%= movie?.year || '' %>"
+  />
+</div>
+
+<div class="mb-3">
+  <label class="form-label">Genre</label>
+  <input
+    type="text"
+    name="genre"
+    class="form-control"
+    value="<%= movie?.genre || '' %>"
+  />
+</div>
+
+<div class="mb-3">
+  <label class="form-label">Description</label>
+  <textarea
+    name="description"
+    rows="4"
+    class="form-control"
+  ><%= movie?.description || '' %></textarea>
+</div>
+
+<div class="mb-3">
+  <label class="form-label">Thumbnail URL</label>
+  <input
+    type="text"
+    name="thumbnailUrl"
+    class="form-control"
+    value="<%= movie?.thumbnailUrl || '' %>"
+  />
+</div>
+
+<div class="mb-3">
+  <label class="form-label">Video URL</label>
+  <input
+    type="text"
+    name="videoUrl"
+    class="form-control"
+    value="<%= movie?.videoUrl || '' %>"
+  />
+</div>

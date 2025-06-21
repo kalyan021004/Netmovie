@@ -1,0 +1,33 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+  <a class="navbar-brand text-danger fw-bold" href="/">NetMovie</a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav me-auto">
+      <% if (currentUserIsAdmin) { %>
+        <li class="nav-item">
+          <a class="nav-link" href="/movies/new">Add New Movie</a>
+        </li>
+      <% } %>
+      <li class="nav-item">
+        <a class="nav-link" href="/movies">Movies</a>
+      </li>
+    </ul>
+
+    <ul class="navbar-nav">
+      <% if (currentUser) { %>
+        <li class="nav-item">
+          <form action="/logout" method="POST" class="d-inline">
+            <button class="nav-link btn btn-link text-decoration-none" type="submit">Logout</button>
+          </form>
+        </li>
+      <% } else { %>
+        <li class="nav-item">
+          <a class="nav-link" href="/signin">Login</a>
+        </li>
+      <% } %>
+    </ul>
+  </div>
+</nav>
