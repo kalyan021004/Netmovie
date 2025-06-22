@@ -1,0 +1,144 @@
+<% layout('layouts/boilerplate') %>
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <h1>Welcome to NetMovie</h1>
+    <p>Stream your favorite movies anytime, anywhere</p>
+    <a href="/movies" class="btn btn-danger btn-lg mt-3">Browse Movies</a>
+  </div>
+</section>
+
+<!-- Featured Movies -->
+<section class="py-4 bg-light position-relative">
+  <div class="container">
+    <h2 class="mb-4">Featured Movies</h2>
+
+    <!-- Scroll Buttons -->
+    <button class="scroll-btn left" onclick="scrollLeft()">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+    <button class="scroll-btn right" onclick="scrollRight()">
+      <i class="bi bi-chevron-right"></i>
+    </button>
+
+    <!-- Movie Scroll Container -->
+    <div id="movie-scroll" class="movie-scroll-container">
+      <% featuredMovies.forEach(movie => { %>
+        <div class="card shadow-sm movie-card" onclick="location.href='/movies/<%= movie._id %>'">
+          <img src="<%= movie.thumbnailUrl %>" alt="<%= movie.title %>">
+          <div class="card-body">
+            <h6><%= movie.title %></h6>
+            <small><%= movie.genre %></small><br />
+            <a href="/movies/<%= movie._id %>" class="btn btn-outline-danger mt-auto">Watch</a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- Reasons to Watch -->
+<section class="py-5 bg-light">
+  <div class="container text-center">
+    <h2 class="mb-4 fw-bold">More Reasons to Watch with NetMovie</h2>
+    <div class="row g-4">
+
+      <div class="col-md-3 col-6">
+        <div class="reason-card">
+          <i class="bi bi-camera-reels-fill"></i>
+          <h6>Thousands of Movies</h6>
+          <p>Explore a vast library across all genres and languages.</p>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="reason-card">
+          <i class="bi bi-play-btn-fill"></i>
+          <h6>Instant Streaming</h6>
+          <p>Click and play instantly without any buffering.</p>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="reason-card">
+          <i class="bi bi-phone-fill"></i>
+          <h6>Watch Anywhere</h6>
+          <p>Stream on mobile, tablet, or desktop—anytime, anywhere.</p>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="reason-card">
+          <i class="bi bi-person-check-fill"></i>
+          <h6>User-Friendly</h6>
+          <p>Easy signup, personalized suggestions, and smooth UI.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-5 bg-white faq-section">
+  <div class="container">
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="accordion" id="faqAccordion">
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeadingOne">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseOne" aria-expanded="true">
+            How can I watch movies on NetMovie?
+          </button>
+        </h2>
+        <div id="faqCollapseOne" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Simply browse our movie collection, choose a title, and click "Watch Now" to start streaming instantly.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeadingTwo">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseTwo">
+            Do I need to sign up to watch movies?
+          </button>
+        </h2>
+        <div id="faqCollapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Yes, creating a free account helps us personalize your experience and keep track of your favorites.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeadingThree">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseThree">
+            Are the movies free to watch?
+          </button>
+        </h2>
+        <div id="faqCollapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Most of our movies are free to stream. Some premium content may require a subscription.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeadingFour">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseFour">
+            Can I download movies?
+          </button>
+        </h2>
+        <div id="faqCollapseFour" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Currently, we only support online streaming. Download functionality is coming soon!
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

@@ -15,7 +15,7 @@ router.get("/signin", (req, res) => {
 
 // === Handle Signup ===
 router.post("/signup", async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, profilePicture } = req.body;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -24,11 +24,24 @@ router.post("/signup", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const newUser = new User({ username, email, password: hashedPassword });
-    await newUser.save();
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
+      profilePicture,
+      role: "user"
+    });
 
-    req.session.userId = newUser._id; // auto-login after signup
-    res.redirect("/signin");
+    await newUser.save();
+   req.session.userId = newUser._id;
+req.session.save((err) => {
+  if (err) {
+    console.error("Session save error:", err);
+    return res.status(500).send("Signup failed");
+  }
+  res.redirect("/signin");
+});
+
   } catch (err) {
     console.error(err);
     res.status(500).send("Signup failed");
@@ -49,9 +62,15 @@ router.post("/signin", async (req, res) => {
     if (!match) {
       return res.status(400).send("Invalid username or password.");
     }
+req.session.userId = user._id;
+req.session.save((err) => {
+  if (err) {
+    console.error("Session save failed:", err);
+    return res.status(500).send("Login failed");
+  }
+  res.redirect("/home");
+});
 
-    req.session.userId = user._id;
-    res.redirect("/movies");
   } catch (err) {
     console.error(err);
     res.status(500).send("Login failed");

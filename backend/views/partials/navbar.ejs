@@ -1,12 +1,26 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-  <a class="navbar-brand text-danger fw-bold" href="/">NetMovie</a>
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+  <a class="navbar-brand text-danger fw-bold" href="/home">NetMovie</a>
 
+  <!-- Mobile controls (search & toggle) -->
+  <div class="d-lg-none d-flex align-items-center">
+    <% if (currentUser) { %>
+      <button class="btn btn-sm btn-outline-danger me-2" type="button" data-bs-toggle="collapse"
+        data-bs-target="#mobileSearchCollapse" aria-expanded="false" aria-controls="mobileSearchCollapse"
+        aria-label="Toggle Search">
+        <i class="fas fa-search"></i>
+      </button>
+    <% } %>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </div>
+
+  <!-- Collapsible nav links -->
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav me-auto">
-      <% if (currentUserIsAdmin) { %>
+      <% if (currentUser && currentUser.role === 'admin') { %>
         <li class="nav-item">
           <a class="nav-link" href="/movies/new">Add New Movie</a>
         </li>
@@ -16,18 +30,105 @@
       </li>
     </ul>
 
-    <ul class="navbar-nav">
+    <% if (currentUser) { %>
+      <form class="d-flex me-3 d-none d-lg-flex" method="GET" action="/movies" role="search">
+        <input class="form-control form-control-sm me-2" type="search" placeholder="Search movies..."
+          aria-label="Search" name="search" value="<%= typeof search !== 'undefined' ? search : '' %>" />
+        <button class="btn btn-danger btn-sm" type="submit">
+          <i class="fas fa-search me-1"></i>Search
+        </button>
+      </form>
+    <% } %>
+  </div>
+
+  <!-- Profile/Login section (always visible) -->
+  <div class="d-flex align-items-center ms-auto position-relative">
+    <ul class="d-flex align-items-center ms-auto position-relative">
       <% if (currentUser) { %>
-        <li class="nav-item">
-          <form action="/logout" method="POST" class="d-inline">
-            <button class="nav-link btn btn-link text-decoration-none" type="submit">Logout</button>
-          </form>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center text-white fw-bold text-uppercase me-2"
+              style="width: 32px; height: 32px; font-size: 14px;">
+              <% if (currentUser.profilePicture) { %>
+                <img src="<%= currentUser.profilePicture %>" alt="Profile" class="rounded-circle"
+                  style="width: 32px; height: 32px; object-fit: cover;">
+              <% } else { %>
+                <%= currentUser.username ? currentUser.username.charAt(0).toUpperCase() : 'U' %>
+              <% } %>
+            </div>
+            <span class="d-none d-md-inline"><%= currentUser.username || 'User' %></span>
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+            <li class="dropdown-header">
+              <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center text-white fw-bold text-uppercase me-2"
+                  style="width: 40px; height: 40px;">
+                  <% if (currentUser.profilePicture) { %>
+                    <img src="<%= currentUser.profilePicture %>" alt="Profile" class="rounded-circle"
+                      style="width: 40px; height: 40px; object-fit: cover;">
+                  <% } else { %>
+                    <%= currentUser.username ? currentUser.username.charAt(0).toUpperCase() : 'U' %>
+                  <% } %>
+                </div>
+                <div>
+                  <div class="fw-bold"><%= currentUser.username || 'User' %></div>
+                  <small class="text-muted"><%= currentUser.email || '' %></small>
+                </div>
+              </div>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>View Profile</a></li>
+            <li><a class="dropdown-item" href="/profile/edit"><i class="fas fa-edit me-2"></i>Edit Profile</a></li>
+            <li><a class="dropdown-item" href="/profile/settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/profile/favorites"><i class="fas fa-heart me-2"></i>My Favorites</a></li>
+            <li><a class="dropdown-item" href="/profile/watchlist"><i class="fas fa-bookmark me-2"></i>Watchlist</a></li>
+            <% if (currentUser.role === 'admin') { %>
+              <li><hr class="dropdown-divider"></li>
+              <li class="dropdown-header">Admin</li>
+              <li><a class="dropdown-item" href="/admin/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+              <li><a class="dropdown-item" href="/admin/users"><i class="fas fa-users me-2"></i>Manage Users</a></li>
+            <% } %>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form action="/logout" method="POST" class="d-inline w-100">
+                <button class="dropdown-item text-danger" type="submit">
+                  <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </button>
+              </form>
+            </li>
+          </ul>
         </li>
       <% } else { %>
         <li class="nav-item">
-          <a class="nav-link" href="/signin">Login</a>
+          <a class="nav-link" href="/signin">
+            <i class="fas fa-sign-in-alt me-1"></i>Login
+          </a>
         </li>
       <% } %>
     </ul>
   </div>
 </nav>
+
+<!-- Mobile Search (below navbar when toggled) -->
+<% if (currentUser) { %>
+  <div class="collapse d-lg-none" id="mobileSearchCollapse">
+    <div class="bg-dark border-top border-secondary">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <form class="d-flex p-3" action="/movies" method="GET" role="search">
+              <input class="form-control me-2" type="search" placeholder="Search movies..." name="search"
+                aria-label="Search" value="<%= typeof search !== 'undefined' ? search : '' %>" autofocus />
+              <button class="btn btn-danger" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% } %>

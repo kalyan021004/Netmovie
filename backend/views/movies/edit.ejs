@@ -1,67 +1,78 @@
 <% layout('layouts/boilerplate.ejs') %>
 
-<h2 class="mb-4">Edit <%= movie && movie.title ? movie.title : '' %></h2>
+<div class="edit-movie-container container mt-5">
+  <h2 class="edit-movie-title mb-4 text-danger fw-bold">
+    Edit <%= movie && movie.title ? movie.title : '' %>
+  </h2>
 
-<form action="/movies/<%= movie._id %>?_method=PUT" method="POST">
-  <div class="mb-3">
-    <label class="form-label">Title</label>
-    <input
-      type="text"
-      name="title"
-      class="form-control"
-      value="<%= movie && movie.title ? movie.title : '' %>"
-      required
-    />
-  </div>
+  <form action="/movies/<%= movie._id %>?_method=PUT" method="POST" class="edit-movie-form needs-validation" novalidate>
+    <div class="edit-movie-group mb-3">
+      <label for="title" class="edit-movie-label">Title</label>
+      <input
+        type="text"
+        id="title"
+        name="title"
+        class="edit-movie-input"
+        value="<%= movie && movie.title ? movie.title : '' %>"
+        required
+      />
+      <div class="invalid-feedback">Please enter a title.</div>
+    </div>
 
-  <div class="mb-3">
-    <label class="form-label">Year</label>
-    <input
-      type="number"
-      name="year"
-      class="form-control"
-      value="<%= movie && movie.year ? movie.year : '' %>"
-    />
-  </div>
+    <div class="edit-movie-group mb-3">
+      <label for="year" class="edit-movie-label">Year</label>
+      <input
+        type="number"
+        id="year"
+        name="year"
+        class="edit-movie-input"
+        value="<%= movie && movie.year ? movie.year : '' %>"
+      />
+    </div>
 
-  <div class="mb-3">
-    <label class="form-label">Genre</label>
-    <input
-      type="text"
-      name="genre"
-      class="form-control"
-      value="<%= movie && movie.genre ? movie.genre : '' %>"
-    />
-  </div>
+    <div class="edit-movie-group mb-3">
+      <label for="genre" class="edit-movie-label">Genre</label>
+      <input
+        type="text"
+        id="genre"
+        name="genre"
+        class="edit-movie-input"
+        value="<%= movie && movie.genre ? movie.genre : '' %>"
+      />
+    </div>
 
-  <div class="mb-3">
-    <label class="form-label">Description</label>
-    <textarea
-      name="description"
-      rows="4"
-      class="form-control"
-    ><%= movie && movie.description ? movie.description : '' %></textarea>
-  </div>
+    <div class="edit-movie-group mb-3">
+      <label for="description" class="edit-movie-label">Description</label>
+      <textarea
+        id="description"
+        name="description"
+        rows="4"
+        class="edit-movie-textarea"
+      ><%= movie && movie.description ? movie.description : '' %></textarea>
+    </div>
 
-  <div class="mb-3">
-    <label class="form-label">Thumbnail URL</label>
-    <input
-      type="text"
-      name="thumbnailUrl"
-      class="form-control"
-      value="<%= movie && movie.thumbnailUrl ? movie.thumbnailUrl : '' %>"
-    />
-  </div>
+    <div class="edit-movie-group mb-3">
+      <label for="thumbnailUrl" class="edit-movie-label">Thumbnail URL</label>
+      <input
+        type="text"
+        id="thumbnailUrl"
+        name="thumbnailUrl"
+        class="edit-movie-input"
+        value="<%= movie && movie.thumbnailUrl ? movie.thumbnailUrl : '' %>"
+      />
+    </div>
 
-  <div class="mb-3">
-    <label class="form-label">Video URL</label>
-    <input
-      type="text"
-      name="videoUrl"
-      class="form-control"
-      value="<%= movie && movie.videoUrl ? movie.videoUrl : '' %>"
-    />
-  </div>
+    <div class="edit-movie-group mb-3">
+      <label for="videoUrl" class="edit-movie-label">Video URL</label>
+      <input
+        type="text"
+        id="videoUrl"
+        name="videoUrl"
+        class="edit-movie-input"
+        value="<%= movie && movie.videoUrl ? movie.videoUrl : '' %>"
+      />
+    </div>
 
-  <button class="btn btn-danger mt-3">Update Movie</button>
-</form>
+    <button type="submit" class="edit-movie-btn btn btn-danger mt-3">Update Movie</button>
+  </form>
+</div>

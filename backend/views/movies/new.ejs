@@ -1,75 +1,76 @@
 <% layout('layouts/boilerplate.ejs') %>
 
-<div class="container mt-5">
-  <h2 class="mb-4 text-danger fw-bold">Add New Movie</h2>
+<div class="add-movie-container container mt-5">
+  <h2 class="add-movie-title mb-4 text-danger fw-bold">Add New Movie</h2>
 
-  <form action="/movies" method="POST" class="needs-validation" novalidate>
-    <div class="mb-3">
-      <label for="title" class="form-label">Title</label>
+  <form action="/movies" method="POST" class="add-movie-form needs-validation" novalidate>
+    <div class="add-movie-group mb-3">
+      <label for="title" class="add-movie-label">Title</label>
       <input
         type="text"
         id="title"
         name="title"
-        class="form-control"
+        class="add-movie-input"
         value=""
         required
       />
+      <div class="invalid-feedback">Please enter a title.</div>
     </div>
 
-    <div class="mb-3">
-      <label for="year" class="form-label">Year</label>
+    <div class="add-movie-group mb-3">
+      <label for="year" class="add-movie-label">Year</label>
       <input
         type="number"
         id="year"
         name="year"
-        class="form-control"
+        class="add-movie-input"
         value=""
       />
     </div>
 
-    <div class="mb-3">
-      <label for="genre" class="form-label">Genre</label>
+    <div class="add-movie-group mb-3">
+      <label for="genre" class="add-movie-label">Genre</label>
       <input
         type="text"
         id="genre"
         name="genre"
-        class="form-control"
+        class="add-movie-input"
         value=""
       />
     </div>
 
-    <div class="mb-3">
-      <label for="description" class="form-label">Description</label>
+    <div class="add-movie-group mb-3">
+      <label for="description" class="add-movie-label">Description</label>
       <textarea
         id="description"
         name="description"
         rows="4"
-        class="form-control"
+        class="add-movie-textarea"
       ></textarea>
     </div>
 
-    <div class="mb-3">
-      <label for="thumbnailUrl" class="form-label">Thumbnail URL</label>
+    <div class="add-movie-group mb-3">
+      <label for="thumbnailUrl" class="add-movie-label">Thumbnail URL</label>
       <input
         type="text"
         id="thumbnailUrl"
         name="thumbnailUrl"
-        class="form-control"
+        class="add-movie-input"
         value=""
       />
     </div>
 
-    <div class="mb-3">
-      <label for="videoUrl" class="form-label">Video URL</label>
+    <div class="add-movie-group mb-3">
+      <label for="videoUrl" class="add-movie-label">Video URL</label>
       <input
         type="text"
         id="videoUrl"
         name="videoUrl"
-        class="form-control"
+        class="add-movie-input"
         value=""
       />
     </div>
 
-    <button class="btn btn-danger mt-3">Add Movie</button>
+    <button type="submit" class="add-movie-btn btn btn-danger mt-3">Add Movie</button>
   </form>
 </div>

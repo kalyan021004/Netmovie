@@ -7,7 +7,8 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const MongoStore = require("connect-mongo");
 const movieRoutes=require("./routes/movie.routes")
-const authRoutes=require("./routes/auth.routes")
+const authRoutes=require("./routes/auth.routes");
+const profileRoutes=require("./routes/profile.routes")
 require('dotenv').config();
 const User = require("./models/user.models"); // Add this at the top of your file
 
@@ -38,18 +39,49 @@ app.use(
 );
 
 app.use(flash());
-app.use(async(req, res, next) => {
-  res.locals.currentUser = req.session.userId || null;
+app.use(async (req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
-    if (req.session.userId) {
-    const user = await User.findById(req.session.userId);
-    res.locals.currentUserIsAdmin = user?.isAdmin || false;
+
+  if (req.session.userId) {
+    try {
+      const user = await User.findById(req.session.userId);
+      res.locals.currentUser = user;
+      res.locals.currentUserIsAdmin = user?.isAdmin || false;
+    } catch (err) {
+      console.error("User fetch failed:", err);
+      res.locals.currentUser = null;
+      res.locals.currentUserIsAdmin = false;
+    }
   } else {
+    res.locals.currentUser = null;
     res.locals.currentUserIsAdmin = false;
   }
+
   next();
 });
+app.use(async (req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+
+  if (req.session.userId) {
+    try {
+      const user = await User.findById(req.session.userId);
+      res.locals.currentUser = user;
+      res.locals.currentUserIsAdmin = user?.isAdmin || false;
+    } catch (err) {
+      console.error("User fetch failed:", err);
+      res.locals.currentUser = null;
+      res.locals.currentUserIsAdmin = false;
+    }
+  } else {
+    res.locals.currentUser = null;
+    res.locals.currentUserIsAdmin = false;
+  }
+
+  next();
+});
+
 mongoose.connect(MONGO_URL)
   .then(() => console.log("Connected to DB"))
   .catch((err) => console.log(err));
@@ -63,6 +95,7 @@ app.use(methodOverride("_method"));
 
 app.use("/",movieRoutes);
 app.use("/",authRoutes)
+app.use("/",profileRoutes)
 
 app.get("/",(req,res)=>{
     res.render("main.ejs")

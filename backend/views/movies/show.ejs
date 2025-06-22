@@ -1,24 +1,154 @@
 <% layout('layouts/boilerplate.ejs') %>
 
-<div class="row">
-  <div class="col-md-6">
-    <video controls class="w-100" poster="<%= movie.thumbnailUrl %>">
+<div class="movie-detail-row movie-detail-container">
+  <div class="movie-video-col">
+    <video controls class="movie-video-player" poster="<%= movie.thumbnailUrl %>">
       <source src="<%= movie.videoUrl %>" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
   </div>
-  <div class="col-md-6">
-    <h2><%= movie.title %></h2>
-    <p><%= movie.description %></p>
-    <p class="text-muted"><strong>Genre:</strong> <%= movie.genre %></p>
-    <p class="text-muted"><strong>Year:</strong> <%= movie.year %></p>
+  <div class="movie-info-col">
+    <h2 class="movie-title"><%= movie.title %></h2>
+    <p class="movie-description"><%= movie.description %></p>
+    <p class="movie-meta"><strong>Genre:</strong> <%= movie.genre %></p>
+    <p class="movie-meta"><strong>Year:</strong> <%= movie.year %></p>
 
-   <% if ((movie.owner && movie.owner.toString() === currentUserId) || currentUserIsAdmin) { %>
-  <a href="/movies/<%= movie._id %>/edit" class="btn btn-warning mt-2">Edit</a>
-  <form action="/movies/<%= movie._id %>?_method=DELETE" method="POST" class="d-inline">
-    <button class="btn btn-danger mt-2">Delete</button>
-  </form>
-<% } %>
+    <% if ((movie.owner && movie.owner.toString() === currentUserId) || currentUserIsAdmin) { %>
+      <a href="/movies/<%= movie._id %>/edit" class="btn btn-edit-movie">Edit</a>
+      <form action="/movies/<%= movie._id %>?_method=DELETE" method="POST" class="form-inline-movie">
+        <button class="btn btn-red">Delete</button>
+      </form>
+    <% } %>
 
+    <% if (currentUserId) { %>
+     <form method="POST" action="/profile/favorites/<%= movie._id %>" style="display: inline;">
+  <button type="submit" class="btn btn-primary">
+    ❤️ Add to Favorites
+  </button>
+</form>
+
+<!-- Add to Watchlist Button -->
+<form method="POST" action="/profile/watchlist/<%= movie._id %>" style="display: inline;">
+  <button type="submit" class="btn btn-secondary">
+    📺 Add to Watchlist
+  </button>
+</form>
+    <% } %>
   </div>
 </div>
+
+<style>
+.movie-detail-container {
+  display: flex;
+  gap: 2rem;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+}
+
+.movie-video-col {
+  flex: 1 1 500px;
+}
+
+.movie-video-player {
+  width: 100%;
+  max-height: 360px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.3);
+}
+
+.movie-info-col {
+  flex: 1 1 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.movie-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.movie-description {
+  font-size: 1.1rem;
+  color: #444;
+  margin: 0.5rem 0 1rem;
+}
+
+.movie-meta {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0.25rem 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+}
+
+.btn-edit-movie {
+  background-color: #0d6efd;
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+
+.btn-edit-movie:hover {
+  background-color: #084cd1;
+}
+
+.form-inline-movie {
+  display: inline-block;
+  margin-left: 1rem;
+}
+
+.btn-red {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+
+.btn-red:hover {
+  background-color: #b02a37;
+}
+
+.btn-form-inline {
+  display: inline-block;
+  margin-top: 0.5rem;
+  margin-right: 1rem;
+}
+
+.btn-favorite {
+  background-color: #e83e8c;
+  color: white;
+  border: none;
+}
+
+.btn-favorite:hover {
+  background-color: #c72568;
+}
+
+.btn-watchlist {
+  background-color: #0dcaf0;
+  color: white;
+  border: none;
+}
+
+.btn-watchlist:hover {
+  background-color: #0bb8d9;
+}
+
+.btn i {
+  margin-right: 0.4rem;
+}
+</style>

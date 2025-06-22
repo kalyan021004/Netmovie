@@ -1,37 +1,42 @@
-<footer class="bg-dark text-white text-center text-lg-start mt-5">
-  <div class="container p-4">
-    <div class="row">
+<footer class="bg-dark text-light pt-5 mt-5">
+  <div class="container">
+    <div class="row text-center text-md-start">
 
-      <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
-        <h5 class="text-danger fw-bold">NetMovie</h5>
-        <p>
-          Stream your favorite movies and shows. Enjoy high quality content anytime, anywhere.
-        </p>
+      <!-- Brand & Description -->
+      <div  class="col-md-4 mb-4">
+<a href="/home" class="col-md-4 mb-4 text-decoration-none text-light" role="button">
+  <h4 class="text-danger fw-bold">NetMovie</h4>
+  <p>Your favorite place to stream top movies, anytime, anywhere.</p>
+</a>
       </div>
 
-      <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-        <h5 class="text-uppercase">Navigation</h5>
-        <ul class="list-unstyled mb-0">
-          <li><a href="/" class="text-white text-decoration-none">Home</a></li>
-          <li><a href="/movies" class="text-white text-decoration-none">Movies</a></li>
-          <li><a href="/login" class="text-white text-decoration-none">Login</a></li>
-          <li><a href="/register" class="text-white text-decoration-none">Register</a></li>
-        </ul>
-      </div>
-
-      <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-        <h5 class="text-uppercase">Connect</h5>
+      <!-- Quick Links -->
+      <div class="col-md-4 mb-4">
+        <h5>Quick Links</h5>
         <ul class="list-unstyled">
-          <li><a href="#" class="text-white text-decoration-none">Facebook</a></li>
-          <li><a href="#" class="text-white text-decoration-none">Instagram</a></li>
-          <li><a href="#" class="text-white text-decoration-none">Twitter</a></li>
+          <li><a href="/about" class="text-light text-decoration-none">About Us</a></li>
+          <li><a href="/contact" class="text-light text-decoration-none">Contact</a></li>
+          <li><a href="/faq" class="text-light text-decoration-none">FAQs</a></li>
+          <li><a href="/terms" class="text-light text-decoration-none">Terms & Conditions</a></li>
         </ul>
+      </div>
+
+      <!-- Social Links -->
+      <div class="col-md-4 mb-4">
+        <h5>Follow Us</h5>
+        <div class="d-flex justify-content-center justify-content-md-start gap-3">
+          <a href="#" class="text-white"><i class="bi bi-facebook fs-4"></i></a>
+          <a href="#" class="text-white"><i class="bi bi-instagram fs-4"></i></a>
+          <a href="#" class="text-white"><i class="bi bi-twitter-x fs-4"></i></a>
+          <a href="#" class="text-white"><i class="bi bi-youtube fs-4"></i></a>
+        </div>
       </div>
 
     </div>
-  </div>
 
-  <div class="text-center p-3 bg-secondary">
-    © <%= new Date().getFullYear() %> NetMovie. All rights reserved.
+    <!-- Footer Bottom -->
+    <div class="text-center py-3 border-top border-secondary">
+      <small>&copy; <%= new Date().getFullYear() %> NetMovie. All rights reserved.</small>
+    </div>
   </div>
 </footer>
