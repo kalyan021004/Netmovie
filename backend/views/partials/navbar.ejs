@@ -94,7 +94,7 @@
             <li><hr class="dropdown-divider"></li>
             <li>
               <form action="/logout" method="POST" class="d-inline w-100">
-                <button class="dropdown-item text-danger" type="submit">
+                <button class="dropdown-item text-danger"  style="color: #dc3545; font-weight: 600 type="submit">
                   <i class="fas fa-sign-out-alt me-2"></i>Logout
                 </button>
               </form>
@@ -103,8 +103,8 @@
         </li>
       <% } else { %>
         <li class="nav-item">
-          <a class="nav-link" href="/signin">
-            <i class="fas fa-sign-in-alt me-1"></i>Login
+          <a class="nav-link text-danger" href="/signin">
+            <i class="fas fa-sign-in-alt me-2"></i>Login
           </a>
         </li>
       <% } %>
