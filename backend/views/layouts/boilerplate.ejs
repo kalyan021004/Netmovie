@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -12,60 +13,195 @@
     />
     <style>
       /* Ensure full height layout */
-html, body {
-  height: 100%;
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-}
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        overflow-x: hidden; /* Prevent horizontal scroll */
+      }
 
-.wrapper {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+      .wrapper {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
 
-/* Let the main content expand */
-main {
-  flex: 1;
-}
+      /* Main content area - grows to fill available space */
+      main {
+        flex: 1 0 auto; /* Grow and shrink, but don't shrink below content size */
+        padding-bottom: 2rem; /* Space before footer */
+      }
 
-/* Footer styles */
-footer {
-  background-color: #111;
-  color: #aaa;
-  text-align: center;
-  padding: 20px 10px;
-  font-size: 14px;
-}
+      /* Container adjustments for better mobile experience */
+      .container {
+        padding-left: 15px;
+        padding-right: 15px;
+        max-width: 100%;
+      }
 
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-  footer {
-    font-size: 12px;
-    padding: 15px 8px;
-    bottom: 0;
-  }
-}
+      /* Responsive margins */
+      .my-4 {
+        margin-top: 1.5rem !important;
+        margin-bottom: 1.5rem !important;
+      }
 
+      /* Footer styles */
+      footer {
+        flex-shrink: 0; /* Prevent footer from shrinking */
+        background-color: #111;
+        color: #aaa;
+        text-align: center;
+        padding: 20px 15px;
+        font-size: 14px;
+        margin-top: auto; /* Push footer to bottom */
+        width: 100%;
+      }
+
+      /* Mobile responsiveness */
+      @media (max-width: 768px) {
+        .container {
+          padding-left: 10px;
+          padding-right: 10px;
+        }
+        
+        .my-4 {
+          margin-top: 1rem !important;
+          margin-bottom: 1rem !important;
+        }
+
+        footer {
+          font-size: 12px;
+          padding: 15px 10px;
+        }
+
+        /* Adjust navbar spacing on mobile */
+        .navbar {
+          padding: 0.5rem 1rem;
+        }
+
+        /* Better button spacing on mobile */
+        .btn {
+          margin-bottom: 0.5rem;
+        }
+
+        /* Responsive text sizing */
+        h1 { font-size: 1.75rem; }
+        h2 { font-size: 1.5rem; }
+        h3 { font-size: 1.25rem; }
+      }
+
+      @media (max-width: 576px) {
+        .container {
+          padding-left: 8px;
+          padding-right: 8px;
+        }
+
+        .my-4 {
+          margin-top: 0.75rem !important;
+          margin-bottom: 0.75rem !important;
+        }
+
+        footer {
+          font-size: 11px;
+          padding: 12px 8px;
+        }
+
+        /* Extra small screens */
+        h1 { font-size: 1.5rem; }
+        h2 { font-size: 1.3rem; }
+        h3 { font-size: 1.1rem; }
+        
+        /* Stack buttons vertically on very small screens */
+        .btn-group-vertical .btn,
+        .d-flex .btn {
+          width: 100%;
+          margin-bottom: 0.5rem;
+        }
+      }
+
+      /* Ensure images are responsive */
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      /* Responsive tables */
+      .table-responsive {
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .table-responsive {
+          font-size: 0.8rem;
+        }
+        
+        .table-responsive table {
+          min-width: 600px;
+        }
+      }
+
+      /* Card improvements for mobile */
+      @media (max-width: 768px) {
+        .card {
+          margin-bottom: 1rem;
+        }
+        
+        .card-body {
+          padding: 1rem 0.75rem;
+        }
+      }
+
+      /* Form improvements */
+      @media (max-width: 768px) {
+        .form-control,
+        .form-select {
+          font-size: 16px; /* Prevents zoom on iOS */
+        }
+      }
+
+      /* Utility classes for responsive spacing */
+      .mobile-center {
+        text-align: center;
+      }
+
+      @media (min-width: 769px) {
+        .mobile-center {
+          text-align: left;
+        }
+      }
+
+      /* Fix for any potential Bootstrap conflicts */
+      .container-fluid {
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+
+      @media (max-width: 576px) {
+        .container-fluid {
+          padding-left: 8px;
+          padding-right: 8px;
+        }
+      }
     </style>
     <!-- Bootstrap Icons CDN -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    
     <link rel="stylesheet" href="/css/style.css" />
   </head>
-
+  
   <body>
-    <%- include('../partials/navbar') %>
+    <div class="wrapper">
+      <%- include('../partials/navbar') %>
+      
+      <main>
+        <div class="container my-4">
+          <%- body %>
+        </div>
+      </main>
 
-
-
-
-
-    <div class="container my-4">
-      <%- body %>
+      <%- include('../partials/footer') %>
     </div>
-
-    <%- include('../partials/footer') %>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/script.js"></script>
