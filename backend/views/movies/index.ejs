@@ -1,8 +1,7 @@
 <% layout('layouts/boilerplate.ejs') %>
 
-
 <style>
-  /* Dark theme styling to match navbar */
+/* Dark theme styling to match navbar */
 body {
     background: linear-gradient(135deg, #1a1a1a 0%, #2d1b2e 100%);
     color: #ffffff;
@@ -55,6 +54,65 @@ body::before {
     height: 3px;
     background: linear-gradient(45deg, #e53e3e, #ff6b6b);
     border-radius: 2px;
+}
+
+/* Filter container styling */
+.filter-container {
+    margin: 2rem 1rem;
+    padding: 1.5rem;
+    background: rgba(45, 55, 72, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.filter-container .form-label {
+    color: #ffffff;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.filter-container .form-select {
+    background: rgba(26, 32, 44, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.filter-container .form-select:focus {
+    background: rgba(26, 32, 44, 0.9);
+    border-color: #e53e3e;
+    box-shadow: 0 0 0 0.2rem rgba(229, 62, 62, 0.25);
+    color: #ffffff;
+}
+
+.filter-container .form-select option {
+    background: #1a202c;
+    color: #ffffff;
+}
+
+.badge {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(45deg, #e53e3e, #c53030) !important;
+    border-radius: 20px;
+}
+
+.btn-outline-secondary {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    background: transparent;
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #e53e3e;
+    color: #ffffff;
 }
 
 /* Full-width responsive grid */
@@ -276,6 +334,25 @@ body::before {
     box-shadow: 0 10px 20px rgba(229, 62, 62, 0.4);
 }
 
+/* Hidden class for filtering */
+.hidden {
+    display: none !important;
+}
+
+/* No movies message */
+.no-movies {
+    text-align: center;
+    padding: 40px;
+    color: #cbd5e0;
+    font-size: 1.2rem;
+    grid-column: 1 / -1;
+}
+
+.no-movies i {
+    color: #e53e3e;
+    margin-bottom: 1rem;
+}
+
 /* Mobile optimizations */
 @media (max-width: 575px) {
     .movies-grid {
@@ -295,6 +372,11 @@ body::before {
     .btn-danger {
         padding: 0.5rem 1rem;
         font-size: 0.8rem;
+    }
+    
+    .filter-container {
+        margin: 1rem 0.5rem;
+        padding: 1rem;
     }
 }
 
@@ -329,16 +411,6 @@ body::before {
     }
 }
 
-/* Loading animation for new cards */
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
-
-.loading-card {
-    animation: pulse 1.5s ease-in-out infinite;
-}
-
 /* Smooth scrolling */
 html {
     scroll-behavior: smooth;
@@ -346,10 +418,32 @@ html {
 </style>
 
 <div class="container-fluid">
-    
-    <div class="movies-grid">
+    <!-- Filter Section -->
+    <div class="filter-container">
+        <div class="row align-items-center">
+            <div class="col-md-4">
+                <label for="genreFilter" class="form-label fw-bold">Filter by Genre:</label>
+                <select id="genreFilter" class="form-select">
+                    <option value="all">All Genres</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <div class="mt-3 mt-md-0">
+                    <span class="badge bg-primary" id="movieCount"><%= allMovies.length %> movies</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mt-3 mt-md-0">
+                    <button class="btn btn-outline-secondary btn-sm" id="clearFilter">Clear Filter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Movies Grid -->
+    <div class="movies-grid" id="moviesGrid">
         <% allMovies.forEach((movie, index) => { %>
-            <div class="movie-card">
+            <div class="movie-card" data-genre="<%= movie.genre %>">
                 <div class="card-img-container">
                     <img src="<%= movie.thumbnailUrl %>" 
                          class="card-img-top" 
@@ -369,25 +463,127 @@ html {
                 </div>
             </div>
         <% }) %>
+        
+        <!-- No movies message (initially hidden) -->
+        <div class="no-movies hidden" id="noMoviesMessage">
+            <i class="fas fa-film fa-3x"></i>
+            <p>No movies found for the selected genre.</p>
+        </div>
     </div>
 </div>
 
 <script>
-// Add intersection observer for scroll animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
+class MovieFilter {
+    constructor() {
+        this.movieCards = document.querySelectorAll('.movie-card');
+        this.genreFilter = document.getElementById('genreFilter');
+        this.movieCount = document.getElementById('movieCount');
+        this.clearButton = document.getElementById('clearFilter');
+        this.noMoviesMessage = document.getElementById('noMoviesMessage');
+        
+        this.init();
+    }
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.animationPlayState = 'running';
+    init() {
+        this.populateGenreFilter();
+        this.updateMovieCount();
+        this.bindEvents();
+        this.setupScrollAnimations();
+    }
+
+    populateGenreFilter() {
+        const genres = new Set();
+        
+        this.movieCards.forEach(card => {
+            const genre = card.getAttribute('data-genre');
+            if (genre) {
+                genres.add(genre);
+            }
+        });
+
+        // Sort genres alphabetically
+        const sortedGenres = Array.from(genres).sort();
+        
+        sortedGenres.forEach(genre => {
+            const option = document.createElement('option');
+            option.value = genre.toLowerCase();
+            option.textContent = genre;
+            this.genreFilter.appendChild(option);
+        });
+    }
+
+    bindEvents() {
+        this.genreFilter.addEventListener('change', () => {
+            this.filterMovies();
+        });
+
+        this.clearButton.addEventListener('click', () => {
+            this.clearFilter();
+        });
+    }
+
+    filterMovies() {
+        const selectedGenre = this.genreFilter.value;
+        let visibleCount = 0;
+
+        this.movieCards.forEach((card, index) => {
+            const movieGenre = card.getAttribute('data-genre');
+            
+            if (selectedGenre === 'all' || movieGenre.toLowerCase() === selectedGenre) {
+                card.classList.remove('hidden');
+                // Re-trigger animation for filtered cards
+                card.style.animationDelay = `${0.1 + (visibleCount * 0.05)}s`;
+                visibleCount++;
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+
+        this.updateMovieCount(visibleCount);
+        this.toggleNoMoviesMessage(visibleCount === 0);
+    }
+
+    clearFilter() {
+        this.genreFilter.value = 'all';
+        this.filterMovies();
+    }
+
+    updateMovieCount(count = null) {
+        const totalCount = count !== null ? count : this.movieCards.length;
+        this.movieCount.textContent = `${totalCount} movie${totalCount !== 1 ? 's' : ''}`;
+    }
+
+    toggleNoMoviesMessage(show) {
+        if (show) {
+            this.noMoviesMessage.classList.remove('hidden');
+        } else {
+            this.noMoviesMessage.classList.add('hidden');
         }
-    });
-}, observerOptions);
+    }
 
-document.querySelectorAll('.movie-card').forEach(card => {
-    observer.observe(card);
+    setupScrollAnimations() {
+        // Add intersection observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        this.movieCards.forEach(card => {
+            observer.observe(card);
+        });
+    }
+}
+
+// Initialize the filter when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    new MovieFilter();
 });
 </script>
