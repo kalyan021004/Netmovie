@@ -442,7 +442,7 @@
 </style>
 
 <%# Check if user is logged in %>
-<% if (typeof user !== 'undefined' && user) { %>
+
     <%# Logged In User Hero %>
     <section class="hero-logged">
         <div class="container">
@@ -503,19 +503,8 @@
             </div>
         </div>
     </section>
-<% } else { %>
     <%# Guest Hero Section %>
-    <section class="hero-guest">
-        <div class="hero-content">
-            <h1 class="hero-title">NetMovie</h1>
-            <p class="hero-subtitle">
-                Stream unlimited movies and TV shows in stunning 4K quality. 
-                Discover your next favorite story with our vast collection of entertainment.
-            </p>
-            <a href="/movies" class="cta-button">Browse Your Interest</a>
-        </div>
-    </section>
-<% } %>
+   
 
 <%# Featured Movies Section %>
 <section class="featured-section">
