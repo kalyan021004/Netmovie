@@ -1,154 +1,1021 @@
 <% layout('layouts/boilerplate.ejs') %>
 
-<div class="movie-detail-row movie-detail-container">
-  <div class="movie-video-col">
-    <video controls class="movie-video-player" poster="<%= movie.thumbnailUrl %>">
-      <source src="<%= movie.videoUrl %>" type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
+  <!-- Hero Section with Video Player -->
+  <div class="hero-section">
+    <div class="hero-background" style="background-image: url('<%= movie.thumbnailUrl %>')"></div>
+    <div class="hero-content">
+      <div class="video-container">
+        <video id="mainVideo" class="main-video" poster="<%= movie.thumbnailUrl %>" controls>
+          <source src="<%= movie.videoUrl %>" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <div class="video-overlay">
+          <button class="play-button" onclick="togglePlay()">
+            <i class="fas fa-play"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="movie-info">
+        <div class="movie-header">
+          <h1 class="movie-title">
+            <%= movie.title %>
+          </h1>
+          <div class="movie-rating">
+            <div class="rating-stars">
+              <% for(let i=1; i <=5; i++) { %>
+                <% if(i <=Math.floor(movie.rating || 4.5)) { %>
+                  <i class="fas fa-star"></i>
+                  <% } else if(i===Math.ceil(movie.rating || 4.5) && (movie.rating || 4.5) % 1 !==0) { %>
+                    <i class="fas fa-star-half-alt"></i>
+                    <% } else { %>
+                      <i class="far fa-star"></i>
+                      <% } %>
+                        <% } %>
+                          <span class="rating-text">
+                            <%= movie.rating || '4.5' %>
+                          </span>
+            </div>
+            <span class="year-badge">
+              <%= movie.year %>
+            </span>
+            <span class="genre-badge">
+              <%= movie.genre %>
+            </span>
+            <% if(movie.duration) { %>
+              <span class="duration-badge">
+                <%= movie.duration %>
+              </span>
+              <% } %>
+          </div>
+        </div>
+
+        <p class="movie-description">
+          <%= movie.description || 'An amazing cinematic experience that will captivate your imagination.' %>
+        </p>
+
+        <div class="action-buttons">
+          <button class="btn btn-primary" onclick="startWatching()">
+            <i class="fas fa-play"></i>
+            Watch Now
+          </button>
+
+          <% if (currentUserId) { %>
+            <form method="POST" action="/profile/favorites/<%= movie._id %>" class="btn-form">
+              <button type="submit" class="btn btn-secondary">
+                <i class="fas fa-heart"></i>
+                Add to Favorites
+              </button>
+            </form>
+
+            <form method="POST" action="/profile/watchlist/<%= movie._id %>" class="btn-form">
+              <button type="submit" class="btn btn-secondary">
+                <i class="fas fa-bookmark"></i>
+                Watchlist
+              </button>
+            </form>
+            <% } %>
+
+              <button class="btn btn-icon" onclick="shareMovie()">
+                <i class="fas fa-share-alt"></i>
+              </button>
+
+              <% if ((movie.owner && movie.owner.toString()===currentUserId) || currentUserIsAdmin) { %>
+                <a href="/movies/<%= movie._id %>/edit" class="btn btn-edit">
+                  <i class="fas fa-edit"></i>
+                  Edit
+                </a>
+                <form action="/movies/<%= movie._id %>?_method=DELETE" method="POST" class="btn-form">
+                  <button class="btn btn-danger" onclick="return confirm('Are you sure?')">
+                    <i class="fas fa-trash"></i>
+                    Delete
+                  </button>
+                </form>
+                <% } %>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="movie-info-col">
-    <h2 class="movie-title"><%= movie.title %></h2>
-    <p class="movie-description"><%= movie.description %></p>
-    <p class="movie-meta"><strong>Genre:</strong> <%= movie.genre %></p>
-    <p class="movie-meta"><strong>Year:</strong> <%= movie.year %></p>
 
-    <% if ((movie.owner && movie.owner.toString() === currentUserId) || currentUserIsAdmin) { %>
-      <a href="/movies/<%= movie._id %>/edit" class="btn btn-edit-movie">Edit</a>
-      <form action="/movies/<%= movie._id %>?_method=DELETE" method="POST" class="form-inline-movie">
-        <button class="btn btn-red">Delete</button>
-      </form>
-    <% } %>
+  <!-- Movie Details Section -->
+  <div class="details-section">
+    <div class="container">
+      <div class="details-grid">
+        <div class="main-content">
+          <div class="section-header">
+            <h2>About this Movie</h2>
+          </div>
 
-    <% if (currentUserId) { %>
-     <form method="POST" action="/profile/favorites/<%= movie._id %>" style="display: inline;">
-  <button type="submit" class="btn btn-primary">
-    ❤️ Add to Favorites
-  </button>
-</form>
+          <div class="movie-stats">
+            <div class="stat-item">
+              <span class="stat-label">Genre</span>
+              <span class="stat-value">
+                <%= movie.genre %>
+              </span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Year</span>
+              <span class="stat-value">
+                <%= movie.year %>
+              </span>
+            </div>
+            <% if(movie.director) { %>
+              <div class="stat-item">
+                <span class="stat-label">Director</span>
+                <span class="stat-value">
+                  <%= movie.director %>
+                </span>
+              </div>
+              <% } %>
+                <% if(movie.language) { %>
+                  <div class="stat-item">
+                    <span class="stat-label">Language</span>
+                    <span class="stat-value">
+                      <%= movie.language %>
+                    </span>
+                  </div>
+                  <% } %>
+          </div>
+        </div>
 
-<!-- Add to Watchlist Button -->
-<form method="POST" action="/profile/watchlist/<%= movie._id %>" style="display: inline;">
-  <button type="submit" class="btn btn-secondary">
-    📺 Add to Watchlist
-  </button>
-</form>
-    <% } %>
+        <div class="sidebar">
+          <!-- Related Movies -->
+          <div class="related-section">
+            <h3>You might also like</h3>
+            <div class="related-movies">
+              <% if(typeof relatedMovies !=='undefined' && relatedMovies && relatedMovies.length> 0) { %>
+                <% relatedMovies.slice(0, 4).forEach(relatedMovie=> { %>
+                  <div class="related-movie">
+                    <img src="<%= relatedMovie.thumbnailUrl %>" alt="<%= relatedMovie.title %>">
+                    <div class="related-info">
+                      <span class="related-title">
+                        <%= relatedMovie.title %>
+                      </span>
+                      <span class="related-genre">
+                        <%= relatedMovie.genre %>
+                      </span>
+                    </div>
+                    <a href="/movies/<%= relatedMovie._id %>" class="related-link"></a>
+                  </div>
+                  <% }) %>
+                    <% } else { %>
+                      <!-- Placeholder movies -->
+                      <div class="related-movie">
+                        <img src="https://images.unsplash.com/photo-1489599904616-c39b508fcab9?w=150&fit=crop"
+                          alt="Sample Movie">
+                        <div class="related-info">
+                          <span class="related-title">Discover More</span>
+                          <span class="related-genre">Coming Soon</span>
+                        </div>
+                        <a href="/movies" class="related-link"></a>
+                      </div>
+                      <div class="related-movie">
+                        <img src="https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=150&fit=crop"
+                          alt="Sample Movie">
+                        <div class="related-info">
+                          <span class="related-title">Browse All</span>
+                          <span class="related-genre">Movies</span>
+                        </div>
+                        <a href="/movies" class="related-link"></a>
+                      </div>
+                      <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- Reviews Section -->
+  <div class="reviews-section">
+    <div class="container">
+      <div class="reviews-header">
+        <h2>Reviews & Ratings</h2>
+        <div class="reviews-summary">
+          <div class="overall-rating">
+            <div class="rating-number">
+              <%= movie.averageRating || '4.5' %>
+            </div>
+            <div class="rating-stars">
+              <% for(let i=1; i <=5; i++) { %>
+                <% if(i <=Math.floor(movie.averageRating || 4.5)) { %>
+                  <i class="fas fa-star"></i>
+                  <% } else if(i===Math.ceil(movie.averageRating || 4.5) && (movie.averageRating || 4.5) % 1 !==0) { %>
+                    <i class="fas fa-star-half-alt"></i>
+                    <% } else { %>
+                      <i class="far fa-star"></i>
+                      <% } %>
+                        <% } %>
+            </div>
+            <div class="reviews-count">
+              <%= movie.reviews ? movie.reviews.length : 0 %> reviews
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Write Review Form -->
+      <% if (currentUserId) { %>
+        <div class="write-review-section">
+          <h3>Write a Review</h3>
+          <form action="/movies/<%= movie._id %>/reviews" method="POST" class="review-form">
+            <div class="rating-input">
+              <label>Your Rating:</label>
+              <div class="star-rating">
+                <% for(let i=5; i>= 1; i--) { %>
+                  <input type="radio" id="star<%= i %>" name="review[rating]" value="<%= i %>" />
+                  <label for="star<%= i %>" class="star-label">
+                    <i class="fas fa-star"></i>
+                  </label>
+                  <% } %>
+              </div>
+            </div>
+
+            <div class="review-input">
+              <label for="reviewBody">Your Review:</label>
+              <textarea id="reviewBody" name="review[body]" rows="5"
+                placeholder="Share your thoughts about this movie..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-paper-plane"></i>
+              Post Review
+            </button>
+          </form>
+        </div>
+        <% } else { %>
+          <div class="login-prompt">
+            <p>
+              <a href="/login">Login</a> to write a review
+            </p>
+          </div>
+          <% } %>
+
+            <!-- All Reviews -->
+            <!-- All Reviews -->
+<!-- All Reviews -->
+<div class="all-reviews">
+  <h3>All Reviews (<%= movie.reviews ? movie.reviews.length : 0 %>)</h3>
+
+  <% if (movie.reviews && movie.reviews.length > 0) { %>
+    <div class="reviews-list">
+      <% movie.reviews.forEach((review) => { %>
+        <div class="review-card">
+          <div class="review-header">
+            <div class="reviewer-info">
+              <div class="reviewer-avatar">
+                <% if (review.author && review.author.profileImage) { %>
+                  <img src="<%= review.author.profileImage %>" alt="<%= review.author.username || 'User' %>">
+                <% } else { %>
+                  <div class="avatar-placeholder">
+                    <i class="fas fa-user"></i>
+                  </div>
+                <% } %>
+              </div>
+              
+              <!-- Replaced reviewer-details with your provided code -->
+              <div class="reviewer-details">
+                <h4 class="reviewer-name">
+                  <% if (review.author && review.author.username) { %>
+                    <%= review.author.username %>
+                  <% } else { %>
+                    <span class="text-muted">Anonymous</span>
+                  <% } %>
+                </h4>
+                <span class="review-date">
+                  <% if (review.createdAt && !isNaN(new Date(review.createdAt).getTime())) { %>
+                    <%= new Date(review.createdAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    }) %>
+                  <% } else { %>
+                    <span class="text-muted">Date unavailable</span>
+                  <% } %>
+                </span>
+              </div>
+            </div>
+
+            <!-- Replaced review-rating with your provided code -->
+            <div class="review-rating">
+              <div class="rating-stars">
+                <% for(let i=1; i <=5; i++) { %>
+                  <% if(i <= review.rating) { %>
+                    <i class="fas fa-star" style="color: #ffd700;"></i>
+                  <% } else { %>
+                    <i class="far fa-star" style="color: #ffd700;"></i>
+                  <% } %>
+                <% } %>
+              </div>
+              <span class="rating-value">
+                <%= review.rating %>/5
+              </span>
+            </div>
+          </div>
+
+          <div class="review-body">
+            <p>
+              <%= review.body %>
+            </p>
+          </div>
+
+          <% if ((review.author && review.author._id.toString() === currentUserId) || currentUserIsAdmin) { %>
+            <div class="review-actions">
+              <form action="/movies/<%= movie._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST"
+                class="delete-review-form">
+                <button type="submit" class="btn btn-danger btn-sm"
+                  onclick="return confirm('Are you sure you want to delete this review?')">
+                  <i class="fas fa-trash"></i>
+                  Delete
+                </button>
+              </form>
+            </div>
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <div class="no-reviews">
+      <i class="fas fa-comment-slash"></i>
+      <h4>No reviews yet</h4>
+      <p>Be the first to share your thoughts about this movie!</p>
+    </div>
+  <% } %>
 </div>
 
-<style>
-.movie-detail-container {
-  display: flex;
-  gap: 2rem;
-  margin: 2rem 0;
-  flex-wrap: wrap;
+
+    </div>
+  </div>
+
+  <style>
+    /* Hero Section */
+    .hero-section {
+      position: relative;
+      min-height: 80vh;
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+      overflow: hidden;
+    }
+
+    .hero-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      opacity: 0.3;
+      filter: blur(2px);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      align-items: center;
+      min-height: 80vh;
+    }
+
+    .video-container {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .main-video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .video-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .video-container:hover .video-overlay {
+      opacity: 1;
+    }
+
+    .play-button {
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .play-button:hover {
+      background: white;
+      transform: scale(1.1);
+    }
+
+    .movie-info {
+      color: white;
+      padding: 2rem 0;
+    }
+
+    .movie-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      margin: 0 0 1rem 0;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .movie-rating {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .rating-stars {
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+    }
+
+    .rating-stars i {
+      color: #ffd700;
+      font-size: 1.2rem;
+    }
+
+    .rating-text {
+      margin-left: 0.5rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .year-badge,
+    .genre-badge,
+    .duration-badge {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .movie-description {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin: 1.5rem 0 2rem 0;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 0.8rem;
+    }
+
+    .btn-edit {
+      background: #007bff;
+      color: white;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-form {
+      display: inline-block;
+      margin: 0;
+    }
+
+    /* Details Section */
+    .details-section {
+      background: #f8f9fa;
+      padding: 4rem 0;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 3rem;
+    }
+
+    .section-header h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #333;
+    }
+
+    .movie-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-item {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-label {
+      display: block;
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    /* Related Movies */
+    .related-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .related-section h3 {
+      margin: 0 0 1.5rem 0;
+      color: #333;
+    }
+
+    .related-movies {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .related-movie {
+      position: relative;
+      display: flex;
+      gap: 1rem;
+      padding: 0.5rem;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+      cursor: pointer;
+    }
+
+    .related-movie:hover {
+      background: #f8f9fa;
+    }
+
+    .related-movie img {
+      width: 80px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .related-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .related-title {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.2rem;
+    }
+
+    .related-genre {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .related-link {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Reviews Section */
+    .reviews-section {
+      background: white;
+      padding: 4rem 0;
+    }
+
+    .reviews-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    .reviews-header h2 {
+      font-size: 2rem;
+      color: #333;
+      margin: 0;
+    }
+
+    .reviews-summary {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .overall-rating {
+      text-align: center;
+    }
+
+    .rating-number {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #333;
+      line-height: 1;
+    }
+
+    .overall-rating .rating-stars {
+      margin: 0.5rem 0;
+    }
+
+    .overall-rating .rating-stars i {
+      font-size: 1.5rem;
+    }
+
+    .reviews-count {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    /* Write Review Form */
+    .write-review-section {
+      background: #f8f9fa;
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 3rem;
+    }
+
+    .write-review-section h3 {
+      margin: 0 0 1.5rem 0;
+      color: #333;
+    }
+
+    .review-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .rating-input label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .star-rating {
+      display: flex;
+      flex-direction: row-reverse;
+      gap: 0.2rem;
+    }
+
+    .star-rating input {
+      display: none;
+    }
+
+    .star-label {
+      cursor: pointer;
+      font-size: 2rem;
+      color: #ddd;
+      transition: color 0.2s ease;
+    }
+
+    .star-rating input:checked~.star-label,
+    .star-rating input:checked~.star-label~.star-label {
+      color: #ffd700;
+    }
+
+    .star-label:hover,
+    .star-label:hover~.star-label {
+      color: #ffd700;
+    }
+
+    .review-input label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .review-input textarea {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      line-height: 1.5;
+      resize: vertical;
+      transition: border-color 0.3s ease;
+    }
+
+    .review-input textarea:focus {
+      outline: none;
+      border-color: #4ecdc4;
+    }
+
+    .login-prompt {
+      background: #f8f9fa;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .login-prompt a {
+      color: #4ecdc4;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .login-prompt a:hover {
+      text-decoration: underline;
+    }
+
+    /* Reviews List */
+    .all-reviews h3 {
+      margin: 0 0 2rem 0;
+      color: #333;
+    }
+
+    .reviews-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .review-card {
+      background: white;
+      border: 2px solid #f0f0f0;
+      border-radius: 12px;
+      padding: 2rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .review-card:hover {
+      border-color: #e0e0e0;
+    }
+
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .reviewer-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .reviewer-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .reviewer-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-placeholder {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    .reviewer-name {
+      margin: 0 0 0.2rem 0;
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    .review-date {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .review-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .rating-value {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .review-body {
+      margin: 1rem 0;
+    }
+
+    .review-body p {
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+    }
+
+    .review-actions {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .delete-review-form {
+      display: inline-block;
+    }
+
+    .no-reviews {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #666;
+    }
+
+    .no-reviews i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .no-reviews h4 {
+      margin: 0 0 0.5rem 0;
+      color: #333;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .hero-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 1rem;
+      }
+
+      .details-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .action-buttons {
+        justify-content: center;
+      }
+
+      .movie-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .reviews-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .review-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .star-rating {
+        justify-content: center;
+      }
+    }
+  </style>
+<script>
+function togglePlay() {
+    const video = document.getElementById('mainVideo');
+    if (video.paused) {
+        video.play();
+    } else {
+        video.pause();
+    }
 }
 
-.movie-video-col {
-  flex: 1 1 500px;
+function startWatching() {
+    const video = document.getElementById('mainVideo');
+    video.play();
+    video.scrollIntoView({ behavior: 'smooth' });
 }
 
-.movie-video-player {
-  width: 100%;
-  max-height: 360px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgb(0 0 0 / 0.3);
+function shareMovie() {
+    if (navigator.share) {
+        navigator.share({
+            title: '<%= movie.title %>',
+            text: 'Check out this movie: <%= movie.title %>',
+            url: window.location.href
+        });
+    } else {
+        // Fallback - copy to clipboard
+        navigator.clipboard.writeText(window.location.href);
+        alert('Movie link copied to clipboard!');
+    }
 }
 
-.movie-info-col {
-  flex: 1 1 350px;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+// Auto-hide video controls
+let controlsTimeout;
+const video = document.getElementById('mainVideo');
 
-.movie-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 0;
-}
-
-.movie-description {
-  font-size: 1.1rem;
-  color: #444;
-  margin: 0.5rem 0 1rem;
-}
-
-.movie-meta {
-  font-size: 0.95rem;
-  color: #666;
-  margin: 0.25rem 0;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  font-weight: 600;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  border: none;
-  transition: background-color 0.3s ease;
-  font-size: 1rem;
-}
-
-.btn-edit-movie {
-  background-color: #0d6efd;
-  color: white;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-}
-
-.btn-edit-movie:hover {
-  background-color: #084cd1;
-}
-
-.form-inline-movie {
-  display: inline-block;
-  margin-left: 1rem;
-}
-
-.btn-red {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-}
-
-.btn-red:hover {
-  background-color: #b02a37;
-}
-
-.btn-form-inline {
-  display: inline-block;
-  margin-top: 0.5rem;
-  margin-right: 1rem;
-}
-
-.btn-favorite {
-  background-color: #e83e8c;
-  color: white;
-  border: none;
-}
-
-.btn-favorite:hover {
-  background-color: #c72568;
-}
-
-.btn-watchlist {
-  background-color: #0dcaf0;
-  color: white;
-  border: none;
-}
-
-.btn-watchlist:hover {
-  background-color: #0bb8d9;
-}
-
-.btn i {
-  margin-right: 0.4rem;
-}
-</style>
+video.addEventListener('mousemove', () => {
+    video.controls = true;
+    clearTimeout(controlsTimeout);
+    controlsTimeout = setTimeout(() => {
+        if (!video.paused) {
+            video.controls = false;
+        }
+    }, 3000);
+});
+</script>

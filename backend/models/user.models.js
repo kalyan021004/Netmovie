@@ -38,6 +38,18 @@ const userSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: "Movie"
     }
+  ],
+  watchedMovies: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Movie"
+    }
+  ],
+  likedMovies: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Movie"
+    }
   ]
 }, { timestamps: true });
 

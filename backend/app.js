@@ -11,11 +11,11 @@ const authRoutes=require("./routes/auth.routes");
 const profileRoutes=require("./routes/profile.routes")
 require('dotenv').config();
 const User = require("./models/user.models"); // Add this at the top of your file
-
+const movieInteractionsRoutes = require('./routes/watchhistory.route');
 const app = express();
 const MONGO_URL =process.env.MONGO_URL ;
 const SESSION_SECRET = process.env.SESSION_SECRET || "defaultSecret";
-
+const reviewRoutes=require("./routes/review.routes")
 const PORT = process.env.PORT || 8080;
 
 app.use(
@@ -42,7 +42,7 @@ app.use(flash());
 app.use(async (req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
-
+  
   if (req.session.userId) {
     try {
       const user = await User.findById(req.session.userId);
@@ -63,7 +63,7 @@ app.use(async (req, res, next) => {
 app.use(async (req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
-
+  
   if (req.session.userId) {
     try {
       const user = await User.findById(req.session.userId);
@@ -78,13 +78,13 @@ app.use(async (req, res, next) => {
     res.locals.currentUser = null;
     res.locals.currentUserIsAdmin = false;
   }
-
+  
   next();
 });
 
 mongoose.connect(MONGO_URL)
-  .then(() => console.log("Connected to DB"))
-  .catch((err) => console.log(err));
+.then(() => console.log("Connected to DB"))
+.catch((err) => console.log(err));
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -96,6 +96,8 @@ app.use(methodOverride("_method"));
 app.use("/",movieRoutes);
 app.use("/",authRoutes)
 app.use("/",profileRoutes)
+app.use('/movies', movieInteractionsRoutes);
+app.use("/movies/:id/reviews", reviewRoutes);
 
 app.get("/",(req,res)=>{
     res.render("main.ejs")

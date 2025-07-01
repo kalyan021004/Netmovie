@@ -1,134 +1,309 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-  <a class="navbar-brand text-danger fw-bold" href="/home">NetMovie</a>
+<style>
+:root {
+  --primary-red: #e50914;
+  --dark-red: #b20710;
+  --glass-bg: rgba(20, 20, 20, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --hover-bg: rgba(255, 255, 255, 0.1);
+}
 
-  <!-- Mobile controls (search & toggle) -->
-  <div class="d-lg-none d-flex align-items-center">
-    <% if (currentUser) { %>
-      <button class="btn btn-sm btn-outline-danger me-2" type="button" data-bs-toggle="collapse"
-        data-bs-target="#mobileSearchCollapse" aria-expanded="false" aria-controls="mobileSearchCollapse"
-        aria-label="Toggle Search">
-        <i class="fas fa-search"></i>
+.modern-navbar {
+   position: sticky;
+  top: 0;
+  z-index: 1030;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 0.75rem 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-brand {
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary-red) 0%, #ff6b6b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2);
+}
+
+.nav-link {
+  color: var(--text-secondary) !important;
+  font-weight: 500;
+  padding: 0.5rem 1rem !important;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(229, 9, 20, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.nav-link:hover {
+  color: var(--text-primary) !important;
+  background: var(--hover-bg);
+  transform: translateY(-1px);
+}
+
+.nav-link:hover::before {
+  left: 100%;
+}
+
+.search-form {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  border-radius: 25px;
+  padding: 0.25rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(10px);
+}
+
+.search-form:focus-within {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--primary-red);
+  box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.2);
+}
+
+.search-input {
+  background: transparent !important;
+  border: none !important;
+  color: var(--text-primary) !important;
+  padding: 0.5rem 1rem !important;
+  font-size: 0.9rem;
+  width: 250px;
+  transition: width 0.3s ease;
+}
+
+.search-input:focus {
+  box-shadow: none !important;
+  outline: none !important;
+  width: 300px;
+}
+
+.search-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.search-btn {
+  background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+}
+
+.search-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(229, 9, 20, 0.4);
+}
+
+.profile-avatar {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--primary-red) 0%, #ff6b6b 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+  border-color: var(--primary-red);
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+}
+
+.dropdown-menu {
+  z-index: 20000 !important; /* ensure it's on top */
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  padding: 1rem 0;
+  margin-top: 0.5rem;
+  min-width: 280px;
+  max-height: 400px; /* handles overflow */
+  overflow-y: auto;
+  animation: dropdownFadeIn 0.3s ease-in-out;
+}
+
+
+.dropdown-menu-end {
+  --bs-position: end;
+  right: 0 !important;
+  left: auto !important;
+}
+
+.dropdown-item {
+  color: var(--text-secondary);
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: var(--hover-bg);
+  color: var(--text-primary);
+  transform: translateX(5px);
+}
+
+.dropdown-header {
+  padding: 1rem 1.5rem 0.5rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.badge-admin {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #000;
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+</style>
+
+<nav class="navbar navbar-expand-lg modern-navbar px-4">
+  <div class="container-fluid">
+    <!-- Brand -->
+    <a class="navbar-brand" href="/home">
+      <i class="fas fa-film me-2"></i>NetMovie
+    </a>
+
+    <!-- Right Side (Toggle + Profile Icon for mobile) -->
+    <div class="d-flex align-items-center ms-auto">
+      <!-- Toggle Button -->
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
       </button>
-    <% } %>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  </div>
-
-  <!-- Collapsible nav links -->
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav me-auto">
-      <% if (currentUser && currentUser.role === 'admin') { %>
-        <li class="nav-item">
-          <a class="nav-link" href="/movies/new">Add New Movie</a>
-        </li>
-      <% } %>
-      <li class="nav-item">
-        <a class="nav-link" href="/movies">Movies</a>
-      </li>
-    </ul>
-
-    <% if (currentUser) { %>
-      <form class="d-flex me-3 d-none d-lg-flex" method="GET" action="/movies" role="search">
-        <input class="form-control form-control-sm me-2" type="search" placeholder="Search movies..."
-          aria-label="Search" name="search" value="<%= typeof search !== 'undefined' ? search : '' %>" />
-        <button class="btn btn-danger btn-sm" type="submit">
-          <i class="fas fa-search me-1"></i>Search
-        </button>
-      </form>
-    <% } %>
-  </div>
-
-  <!-- Profile/Login section (always visible) -->
-  <div class="d-flex align-items-center ms-auto position-relative">
-    <ul class="d-flex align-items-center ms-auto position-relative">
+      <!-- Mobile Profile Icon -->
       <% if (currentUser) { %>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button"
-            data-bs-toggle="dropdown" aria-expanded="false">
-            <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center text-white fw-bold text-uppercase me-2"
-              style="width: 32px; height: 32px; font-size: 14px;">
+        <div class="nav-item dropdown d-lg-none">
+          <a class="nav-link dropdown-toggle p-0" href="#" id="mobileProfileDropdown" role="button"
+             data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="profile-avatar rounded-circle d-flex justify-content-center align-items-center text-white fw-bold"
+                 style="width: 32px; height: 32px; background-color: #6c757d;">
               <% if (currentUser.profilePicture) { %>
-                <img src="<%= currentUser.profilePicture %>" alt="Profile" class="rounded-circle"
-                  style="width: 32px; height: 32px; object-fit: cover;">
+                <img src="<%= currentUser.profilePicture %>" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;" />
               <% } else { %>
                 <%= currentUser.username ? currentUser.username.charAt(0).toUpperCase() : 'U' %>
               <% } %>
             </div>
-            <span class="d-none d-md-inline"><%= currentUser.username || 'User' %></span>
           </a>
+          <ul class="dropdown-menu dropdown-menu-end mt-2 shadow" aria-labelledby="mobileProfileDropdown">
+            <li><a class="dropdown-item" href="/profile">View Profile</a></li>
+            <li><a class="dropdown-item" href="/profile/edit">Edit Profile</a></li>
+            <li><a class="dropdown-item" href="/favorites">My Favorites</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><form method="POST" action="/logout"><button class="dropdown-item">Logout</button></form></li>
+          </ul>
+        </div>
+      <% } %>
+    </div>
 
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-            <li class="dropdown-header">
-              <div class="d-flex align-items-center">
-                <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center text-white fw-bold text-uppercase me-2"
-                  style="width: 40px; height: 40px;">
-                  <% if (currentUser.profilePicture) { %>
-                    <img src="<%= currentUser.profilePicture %>" alt="Profile" class="rounded-circle"
-                      style="width: 40px; height: 40px; object-fit: cover;">
-                  <% } else { %>
-                    <%= currentUser.username ? currentUser.username.charAt(0).toUpperCase() : 'U' %>
-                  <% } %>
-                </div>
-                <div>
-                  <div class="fw-bold"><%= currentUser.username || 'User' %></div>
-                  <small class="text-muted"><%= currentUser.email || '' %></small>
-                </div>
+    <!-- Collapsible Navbar Content -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- Left Links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <% if (currentUser) { %>
+          <li class="nav-item">
+            <a class="nav-link" href="/movies">Browse</a>
+          </li>
+        <% } %>
+      </ul>
+
+      <!-- Right Side: Search + Profile OR Login/Register -->
+      <div class="d-flex align-items-center ms-auto">
+        <% if (currentUser) { %>
+          <!-- Search Bar -->
+          <form class="d-flex me-3" method="GET" action="/movies">
+            <input class="form-control me-2" type="search" placeholder="Search movies..." name="search">
+            <button class="btn btn-outline-light" type="submit">Search</button>
+          </form>
+
+          <!-- Desktop Profile Icon -->
+          <div class="nav-item dropdown d-none d-lg-block">
+            <a class="nav-link dropdown-toggle p-0" href="#" id="desktopProfileDropdown" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="profile-avatar rounded-circle d-flex justify-content-center align-items-center text-white fw-bold"
+                   style="width: 32px; height: 32px; background-color: #6c757d;">
+                <% if (currentUser.profilePicture) { %>
+                  <img src="<%= currentUser.profilePicture %>" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;" />
+                <% } else { %>
+                  <%= currentUser.username ? currentUser.username.charAt(0).toUpperCase() : 'U' %>
+                <% } %>
               </div>
-            </li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>View Profile</a></li>
-            <li><a class="dropdown-item" href="/profile/edit"><i class="fas fa-edit me-2"></i>Edit Profile</a></li>
-            <li><a class="dropdown-item" href="/profile/settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/profile/favorites"><i class="fas fa-heart me-2"></i>My Favorites</a></li>
-            <li><a class="dropdown-item" href="/profile/watchlist"><i class="fas fa-bookmark me-2"></i>Watchlist</a></li>
-            <% if (currentUser.role === 'admin') { %>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end mt-2 shadow" aria-labelledby="desktopProfileDropdown">
+              <li><a class="dropdown-item" href="/profile">View Profile</a></li>
+              <li><a class="dropdown-item" href="/profile/edit">Edit Profile</a></li>
+              <li><a class="dropdown-item" href="/favorites">My Favorites</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li class="dropdown-header">Admin</li>
-              <li><a class="dropdown-item" href="/admin/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
-              <li><a class="dropdown-item" href="/admin/users"><i class="fas fa-users me-2"></i>Manage Users</a></li>
-            <% } %>
-            <li><hr class="dropdown-divider"></li>
-            <li>
-              <form action="/logout" method="POST" class="d-inline w-100">
-                <button class="dropdown-item text-danger"  style="color: #dc3545; font-weight: 600 type="submit">
-                  <i class="fas fa-sign-out-alt me-2"></i>Logout
-                </button>
-              </form>
+              <li><form method="POST" action="/logout"><button class="dropdown-item">Logout</button></form></li>
+            </ul>
+          </div>
+        <% } else { %>
+          <!-- Login/Register (Before login) -->
+          <ul class="navbar-nav d-flex flex-row gap-2">
+            <li class="nav-item">
+              <a class="nav-link btn btn-outline-light px-3" href="/signup">Register</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link btn btn-outline-light px-3" href="/signin">Login</a>
             </li>
           </ul>
-        </li>
-      <% } else { %>
-        <li class="nav-item">
-          <a class="nav-link text-danger" href="/signin">
-            <i class="fas fa-sign-in-alt me-2"></i>Login
-          </a>
-        </li>
-      <% } %>
-    </ul>
-  </div>
-</nav>
-
-<!-- Mobile Search (below navbar when toggled) -->
-<% if (currentUser) { %>
-  <div class="collapse d-lg-none" id="mobileSearchCollapse">
-    <div class="bg-dark border-top border-secondary">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-            <form class="d-flex p-3" action="/movies" method="GET" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search movies..." name="search"
-                aria-label="Search" value="<%= typeof search !== 'undefined' ? search : '' %>" autofocus />
-              <button class="btn btn-danger" type="submit">
-                <i class="fas fa-search"></i>
-              </button>
-            </form>
-          </div>
-        </div>
+        <% } %>
       </div>
     </div>
   </div>
-<% } %>
+</nav>
+
+<script>
+  document.addEventListener('click', function (event) {
+    const navbarCollapse = document.getElementById('navbarNav');
+    const toggleButton = document.querySelector('.navbar-toggler');
+
+    // If clicked outside the navbar when it's open
+    if (navbarCollapse.classList.contains('show') &&
+        !navbarCollapse.contains(event.target) &&
+        !toggleButton.contains(event.target)) {
+      new bootstrap.Collapse(navbarCollapse).hide();
+    }
+  });
+</script>
+

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const User = require('../models/user.models');
 const { isLoggedIn } = require('../middleware/auth');
 
-// Profile view
+// Profile view with statistics
 router.get('/profile', isLoggedIn, async (req, res, next) => {
   try {
     const user = await User.findById(req.session.userId);
@@ -12,51 +12,18 @@ router.get('/profile', isLoggedIn, async (req, res, next) => {
       req.flash('error', 'User not found');
       return res.redirect('/login');
     }
-    res.render('profile/view', { user });
+    
+    // Calculate statistics
+    const stats = {
+      moviesWatched: user.watchedMovies ? user.watchedMovies.length : 0,
+      favoritesCount: user.favorites ? user.favorites.length : 0,
+      watchlistCount: user.watchlist ? user.watchlist.length : 0
+    };
+    
+    res.render('profile/view', { user, stats });
   } catch (err) {
     console.error(err);
     next(err);
-  }
-});
-
-// Profile edit form
-router.get('/profile/edit', isLoggedIn, async (req, res, next) => {
-  try {
-    const user = await User.findById(req.session.userId);
-    if (!user) {
-      req.flash('error', 'User not found');
-      return res.redirect('/login');
-    }
-    res.render('profile/edit', { user });
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
-});
-
-// Profile edit submit
-router.post('/profile/edit', isLoggedIn, async (req, res, next) => {
-  try {
-    const { username, email } = req.body;
-    const updatedUser = await User.findByIdAndUpdate(
-      req.session.userId, 
-      { username, email }, 
-      { new: true, runValidators: true }
-    );
-    if (!updatedUser) {
-      req.flash('error', 'User not found');
-      return res.redirect('/login');
-    }
-    req.flash('success', 'Profile updated successfully');
-    res.redirect('/profile');
-  } catch (err) {
-    console.error(err);
-    if (err.name === 'ValidationError') {
-      req.flash('error', 'Please check your input data');
-    } else {
-      req.flash('error', 'Failed to update profile');
-    }
-    res.redirect('/profile/edit');
   }
 });
 
@@ -237,7 +204,7 @@ router.post('/profile/watchlist/:movieId', isLoggedIn, async (req, res, next) =>
     } else {
       req.flash('info', 'Already in watchlist!');
     }
-        res.redirect(`/movies/${movieId}`);
+    res.redirect(`/movies/${movieId}`);
 
   } catch (err) {
     console.error('Error adding to watchlist:', err);

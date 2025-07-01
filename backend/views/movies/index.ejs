@@ -1,22 +1,393 @@
 <% layout('layouts/boilerplate.ejs') %>
 
 
+<style>
+  /* Dark theme styling to match navbar */
+body {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d1b2e 100%);
+    color: #ffffff;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
 
-<h2 class="mb-4 text-center fw-bold text-danger">All Movies</h2>
+/* Remove default container padding */
+.container-fluid {
+    padding: 0;
+}
 
-<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center">
-  <% allMovies.forEach(movie => { %>
-    <div class="col d-flex justify-content-center">
-      <div class="card h-100 movie-card">
-        <div class="card-img-container">
-          <img src="<%= movie.thumbnailUrl %>" class="card-img-top" alt="<%= movie.title %>">
-        </div>
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title" title="<%= movie.title %>"><%= movie.title %></h5>
-          <p class="card-text"><%= movie.genre %> | <%= movie.year %></p>
-          <a href="/movies/<%= movie._id %>" class="btn btn-danger mt-auto">View</a>
-        </div>
-      </div>
+/* Animated background elements */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 50%, rgba(229, 62, 62, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(229, 62, 62, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Page title with gradient effect */
+.page-title {
+    background: linear-gradient(45deg, #e53e3e, #ff6b6b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    text-align: center;
+    margin: 2rem 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    position: relative;
+    padding: 0 1rem;
+}
+
+.page-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(45deg, #e53e3e, #ff6b6b);
+    border-radius: 2px;
+}
+
+/* Full-width responsive grid */
+.movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Responsive breakpoints for different screen sizes */
+@media (min-width: 576px) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.25rem;
+        padding: 1.25rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.75rem;
+        padding: 2rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 2rem 3rem;
+    }
+}
+
+@media (min-width: 1400px) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2.5rem;
+        padding: 2rem 4rem;
+    }
+}
+
+/* Staggered animation delays */
+.movie-card:nth-child(1) { animation-delay: 0.1s; }
+.movie-card:nth-child(2) { animation-delay: 0.15s; }
+.movie-card:nth-child(3) { animation-delay: 0.2s; }
+.movie-card:nth-child(4) { animation-delay: 0.25s; }
+.movie-card:nth-child(5) { animation-delay: 0.3s; }
+.movie-card:nth-child(6) { animation-delay: 0.35s; }
+.movie-card:nth-child(7) { animation-delay: 0.4s; }
+.movie-card:nth-child(8) { animation-delay: 0.45s; }
+
+/* Movie card with glassmorphism effect */
+.movie-card {
+    background: rgba(45, 55, 72, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(30px);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Fade in animation */
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.movie-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s;
+    z-index: 1;
+}
+
+.movie-card:hover::before {
+    left: 100%;
+}
+
+.movie-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 20px 40px rgba(229, 62, 62, 0.2), 
+                0 0 30px rgba(229, 62, 62, 0.1);
+    border-color: rgba(229, 62, 62, 0.3);
+}
+
+/* Image container with overlay effects */
+.card-img-container {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    background: linear-gradient(45deg, #2d3748, #4a5568);
+    flex-shrink: 0;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.4s ease;
+    filter: brightness(0.9);
+}
+
+.movie-card:hover .card-img-top {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+/* Overlay gradient */
+.card-img-container::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(transparent, rgba(45, 55, 72, 0.8));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.movie-card:hover .card-img-container::after {
+    opacity: 1;
+}
+
+/* Card body styling */
+.card-body {
+    background: transparent;
+    padding: 1rem;
+    position: relative;
+    z-index: 2;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-title {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+.card-text {
+    color: #cbd5e0;
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    margin-bottom: auto;
+    font-weight: 500;
+    padding-bottom: 1rem;
+}
+
+/* Enhanced button with glow effect */
+.btn-danger {
+    background: linear-gradient(45deg, #e53e3e, #c53030);
+    border: none;
+    border-radius: 20px;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    margin-top: auto;
+    align-self: stretch;
+}
+
+.btn-danger::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-danger:hover::before {
+    left: 100%;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(45deg, #c53030, #e53e3e);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(229, 62, 62, 0.4);
+}
+
+/* Mobile optimizations */
+@media (max-width: 575px) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 0.75rem;
+        padding: 0.75rem;
+    }
+    
+    .card-body {
+        padding: 0.75rem;
+    }
+    
+    .page-title {
+        margin: 1rem 0;
+    }
+    
+    .btn-danger {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 375px) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+}
+
+/* Large screens optimization */
+@media (min-width: 1600px) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 3rem;
+        padding: 3rem 5rem;
+    }
+    
+    .card-img-container {
+        aspect-ratio: 3/2;
+    }
+}
+
+/* Ultra-wide screens */
+@media (min-width: 2000px) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 4rem;
+        padding: 4rem 6rem;
+    }
+}
+
+/* Loading animation for new cards */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.loading-card {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+</style>
+
+<div class="container-fluid">
+    
+    <div class="movies-grid">
+        <% allMovies.forEach((movie, index) => { %>
+            <div class="movie-card">
+                <div class="card-img-container">
+                    <img src="<%= movie.thumbnailUrl %>" 
+                         class="card-img-top" 
+                         alt="<%= movie.title %>"
+                         loading="lazy">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" title="<%= movie.title %>">
+                        <%= movie.title %>
+                    </h5>
+                    <p class="card-text">
+                        <%= movie.genre %> | <%= movie.year %>
+                    </p>
+                    <a href="/movies/<%= movie._id %>" class="btn btn-danger">
+                        Watch Now
+                    </a>
+                </div>
+            </div>
+        <% }) %>
     </div>
-  <% }) %>
 </div>
+
+<script>
+// Add intersection observer for scroll animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.animationPlayState = 'running';
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.movie-card').forEach(card => {
+    observer.observe(card);
+});
+</script>

@@ -62,7 +62,12 @@ router.post("/movies", isOwner, async (req, res) => {
 router.get("/movies/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const movie = await Movie.findById(id);
+   const movie = await Movie.findById(id)
+  .populate({
+    path: "reviews",
+    populate: { path: "author", select: "username profileImage" }
+  });
+
     
     if (!movie) {
       return res.status(404).send("Movie not found");

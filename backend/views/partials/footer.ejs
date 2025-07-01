@@ -1,42 +1,285 @@
-<footer class="bg-dark text-light pt-5 mt-5 ">
+<style>
+  :root {
+    --primary-red: #e50914;
+    --dark-red: #b20710;
+  }
+
+  .footer-custom {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+    color: #ffffff;
+    padding: 60px 0 40px 0;
+    margin-top: 50px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Decorative bar on top */
+  .footer-custom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 5px;
+    background: linear-gradient(90deg, var(--primary-red), var(--dark-red));
+    border-radius: 50px;
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  .brand-section h4 {
+    color: var(--primary-red);
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .brand-section p {
+    color: #b3b3b3;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  .footer-section h5 {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--primary-red);
+    display: inline-block;
+  }
+
+  .footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-links li {
+    margin-bottom: 12px;
+  }
+
+  .footer-links a {
+    color: #b3b3b3;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .footer-links a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 0%;
+    height: 2px;
+    background: var(--primary-red);
+    transition: width 0.3s ease;
+  }
+
+  .footer-links a:hover {
+    color: var(--primary-red);
+  }
+
+  .footer-links a:hover::after {
+    width: 100%;
+  }
+
+  .social-icons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .social-icons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: #b3b3b3;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .social-icons a:hover {
+    background: var(--primary-red);
+    color: #ffffff;
+    transform: translateY(-4px) scale(1.1);
+    box-shadow: 0 8px 20px rgba(229, 9, 20, 0.6);
+  }
+
+  /* Glow pulse animation on social icons */
+  .social-icons a:hover::after {
+    content: '';
+    position: absolute;
+    width: 140%;
+    height: 140%;
+    border-radius: 50%;
+    top: -20%;
+    left: -20%;
+    background: rgba(229, 9, 20, 0.5);
+    filter: blur(8px);
+    animation: pulseGlow 1.5s infinite alternate ease-in-out;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  @keyframes pulseGlow {
+    from {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(1.3);
+    }
+  }
+
+  /* Newsletter subscription */
+  .newsletter-section {
+    margin-top: 30px;
+    text-align: center;
+  }
+
+  .newsletter-section input[type="email"] {
+    width: 280px;
+    max-width: 90%;
+    padding: 12px 15px;
+    border-radius: 30px 0 0 30px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    color: #222;
+    box-shadow: 0 0 10px rgba(229, 9, 20, 0.3);
+  }
+
+  .newsletter-section button {
+    padding: 12px 25px;
+    border-radius: 0 30px 30px 0;
+    border: none;
+    background: var(--primary-red);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    box-shadow: 0 4px 12px rgba(229, 9, 20, 0.6);
+  }
+
+  .newsletter-section button:hover {
+    background: var(--dark-red);
+    box-shadow: 0 6px 18px rgba(229, 9, 20, 0.9);
+  }
+
+  .footer-bottom {
+    background: rgba(0, 0, 0, 0.3);
+    margin-top: 40px;
+    padding: 20px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .footer-bottom small {
+    color: #808080;
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 768px) {
+    .social-icons {
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .footer-custom {
+      padding: 40px 0 20px 0;
+    }
+
+    .brand-section h4 {
+      font-size: 1.6rem;
+    }
+
+    .newsletter-section input[type="email"] {
+      width: 100%;
+      border-radius: 30px;
+      margin-bottom: 10px;
+    }
+
+    .newsletter-section button {
+      width: 100%;
+      border-radius: 30px;
+    }
+  }
+</style>
+
+<footer class="footer-custom">
   <div class="container">
     <div class="row text-center text-md-start">
-
       <!-- Brand & Description -->
-      <div  class="col-md-4 mb-4">
-<a href="/home" class="col-md-4 mb-4 text-decoration-none text-light" role="button">
-  <h4 class="text-danger fw-bold">NetMovie</h4>
-  <p>Your favorite place to stream top movies, anytime, anywhere.</p>
-</a>
+      <div class="col-md-4 mb-4">
+        <div class="brand-section">
+          <h4>NetMovie</h4>
+          <p>Your favorite place to stream top movies, anytime, anywhere.</p>
+        </div>
       </div>
 
       <!-- Quick Links -->
       <div class="col-md-4 mb-4">
-        <h5>Quick Links</h5>
-        <ul class="list-unstyled">
-          <li><a href="/about" class="text-light text-decoration-none">About Us</a></li>
-          <li><a href="/contact" class="text-light text-decoration-none">Contact</a></li>
-          <li><a href="/faq" class="text-light text-decoration-none">FAQs</a></li>
-          <li><a href="/terms" class="text-light text-decoration-none">Terms & Conditions</a></li>
-        </ul>
+        <div class="footer-section">
+          <h5>Quick Links</h5>
+          <ul class="footer-links">
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/faq">FAQs</a></li>
+            <li><a href="/terms">Terms & Conditions</a></li>
+          </ul>
+        </div>
+
+        <!-- Newsletter Signup -->
+        <div class="newsletter-section mt-4">
+          <h5>Subscribe to our Newsletter</h5>
+          <form action="/" method="POST" onsubmit="alert('Thank you for subscribing!'); return true;">
+            <input type="email" name="email" placeholder="Your email address" required />
+            <button type="submit">Subscribe</button>
+          </form>
+        </div>
       </div>
 
       <!-- Social Links -->
       <div class="col-md-4 mb-4">
-        <h5>Follow Us</h5>
-        <div class="d-flex justify-content-center justify-content-md-start gap-3">
-          <a href="#" class="text-white"><i class="bi bi-facebook fs-4"></i></a>
-          <a href="#" class="text-white"><i class="bi bi-instagram fs-4"></i></a>
-          <a href="#" class="text-white"><i class="bi bi-twitter-x fs-4"></i></a>
-          <a href="#" class="text-white"><i class="bi bi-youtube fs-4"></i></a>
+        <div class="footer-section">
+          <h5>Follow Us</h5>
+          <div class="social-icons justify-content-center justify-content-md-start">
+            <a href="#" title="Facebook" aria-label="Facebook">
+              <i class="bi bi-facebook"></i>
+            </a>
+            <a href="#" title="Instagram" aria-label="Instagram">
+              <i class="bi bi-instagram"></i>
+            </a>
+            <a href="#" title="Twitter/X" aria-label="Twitter">
+              <i class="bi bi-twitter-x"></i>
+            </a>
+            <a href="#" title="YouTube" aria-label="YouTube">
+              <i class="bi bi-youtube"></i>
+            </a>
+          </div>
         </div>
       </div>
-
     </div>
 
     <!-- Footer Bottom -->
-    <div class="text-center py-3 border-top border-secondary">
-      <small>&copy; <%= new Date().getFullYear() %> NetMovie. All rights reserved.</small>
+    <div class="footer-bottom">
+      <div class="text-center">
+        <small>&copy; <%= new Date().getFullYear() %> NetMovie. All rights reserved.</small>
+      </div>
     </div>
   </div>
 </footer>
