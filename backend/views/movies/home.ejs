@@ -1,731 +1,241 @@
 <% layout('layouts/boilerplate') %>
 
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-    
-    :root {
-        --primary-color: #e50914;
-        --secondary-color: #221f1f;
-        --accent-color: #46d369;
-        --text-light: #f5f5f5;
-        --text-dark: #141414;
-        --glass-bg: rgba(255, 255, 255, 0.1);
-        --glass-border: rgba(255, 255, 255, 0.2);
-    }
-
-    body {
-        font-family: 'Inter', sans-serif;
-        background: var(--text-dark);
-        color: var(--text-light);
-    }
-
-    /* Guest Hero Section */
-    .hero-guest {
-        min-height: 100vh;
-        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .hero-guest::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="grad1" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:rgba(229,9,20,0.1)"/><stop offset="100%" style="stop-color:transparent"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23grad1)"/><circle cx="800" cy="300" r="150" fill="url(%23grad1)"/><circle cx="300" cy="800" r="120" fill="url(%23grad1)"/></svg>');
-        animation: float 20s ease-in-out infinite;
-    }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0px) rotate(0deg); }
-        50% { transform: translateY(-20px) rotate(180deg); }
-    }
-
-    .hero-content {
-        text-align: center;
-        z-index: 10;
-        position: relative;
-        max-width: 800px;
-        padding: 2rem;
-    }
-
-    .hero-title {
-        font-size: 5rem;
-        font-weight: 800;
-        margin-bottom: 1.5rem;
-        background: linear-gradient(45deg, #ffffff, var(--primary-color), #ff6b6b);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: slideInUp 1s ease-out;
-    }
-
-    @keyframes slideInUp {
-        from {
-            opacity: 0;
-            transform: translateY(50px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .hero-subtitle {
-        font-size: 1.4rem;
-        color: rgba(255, 255, 255, 0.8);
-        margin-bottom: 3rem;
-        font-weight: 400;
-        line-height: 1.6;
-        animation: slideInUp 1s ease-out 0.2s both;
-    }
-
-    .cta-button {
-        background: linear-gradient(45deg, var(--primary-color), #ff4757);
-        border: none;
-        padding: 1.2rem 3rem;
-        font-size: 1.2rem;
-        font-weight: 600;
-        border-radius: 50px;
-        color: white;
-        text-decoration: none;
-        display: inline-block;
-        transition: all 0.4s ease;
-        box-shadow: 0 8px 25px rgba(229, 9, 20, 0.3);
-        position: relative;
-        overflow: hidden;
-        animation: slideInUp 1s ease-out 0.4s both;
-    }
-
-    .cta-button::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.5s;
-    }
-
-    .cta-button:hover::before {
-        left: 100%;
-    }
-
-    .cta-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 15px 35px rgba(229, 9, 20, 0.4);
-        color: white;
-        text-decoration: none;
-    }
-
-    /* Logged In Hero Section */
-    .hero-logged {
-        min-height: 70vh;
-        background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1489599440656-7b4b1c42c8ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: center;
-        position: relative;
-        border-radius: 12px;
-        margin: 2rem 0;
-        overflow: hidden;
-    }
-
-    .hero-movie-info {
-        z-index: 10;
-        max-width: 600px;
-        padding: 3rem;
-    }
-
-    .hero-movie-title {
-        font-size: 3.5rem;
-        font-weight: 800;
-        margin-bottom: 1rem;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-    }
-
-    .hero-movie-desc {
-        font-size: 1.1rem;
-        margin-bottom: 2rem;
-        line-height: 1.6;
-        color: rgba(255, 255, 255, 0.9);
-    }
-
-    .hero-buttons {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-
-    .btn-play, .btn-info {
-        padding: 0.8rem 2rem;
-        font-size: 1.1rem;
-        font-weight: 600;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-play {
-        background: white;
-        color: black;
-    }
-
-    .btn-play:hover {
-        background: rgba(255, 255, 255, 0.8);
-        transform: scale(1.05);
-    }
-
-    .btn-info {
-        background: rgba(109, 109, 110, 0.7);
-        color: white;
-    }
-
-    .btn-info:hover {
-        background: rgba(109, 109, 110, 0.9);
-        transform: scale(1.05);
-    }
-
-    /* Featured Movies Section */
-    .featured-section {
-        padding: 4rem 0;
-        background: var(--text-dark);
-    }
-
-    .section-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 3rem;
-        background: linear-gradient(45deg, var(--text-light), var(--primary-color));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .movie-scroll-container {
-        display: flex;
-        gap: 1.5rem;
-        overflow-x: auto;
-        padding: 1rem 0;
-        scroll-behavior: smooth;
-        position: relative;
-    }
-
-    .movie-scroll-container::-webkit-scrollbar {
-        height: 8px;
-    }
-
-    .movie-scroll-container::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
-    }
-
-    .movie-scroll-container::-webkit-scrollbar-thumb {
-        background: var(--primary-color);
-        border-radius: 4px;
-    }
-
-    .movie-card {
-        min-width: 280px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        position: relative;
-        backdrop-filter: blur(10px);
-    }
-
-    .movie-card:hover {
-        transform: translateY(-10px) scale(1.05);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-        border-color: var(--primary-color);
-    }
-
-    .movie-card img {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-    }
-
-    .movie-card:hover img {
-        transform: scale(1.1);
-    }
-
-    .movie-card .card-body {
-        padding: 1.5rem;
-    }
-
-    .movie-card h6 {
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: var(--text-light);
-    }
-
-    .movie-card small {
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 0.9rem;
-    }
-
-    .movie-card .btn {
-        margin-top: 1rem;
-        width: 100%;
-        background: var(--primary-color);
-        border: none;
-        color: white;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-    .movie-card .btn:hover {
-        background: #cc0812;
-        transform: translateY(-2px);
-    }
-
-    /* Scroll Buttons */
-    .scroll-btn {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(0, 0, 0, 0.7);
-        border: none;
-        color: white;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        font-size: 1.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        z-index: 10;
-        backdrop-filter: blur(10px);
-    }
-
-    .scroll-btn:hover {
-        background: var(--primary-color);
-        transform: translateY(-50%) scale(1.1);
-    }
-
-    .scroll-btn.left {
-        left: -25px;
-    }
-
-    .scroll-btn.right {
-        right: -25px;
-    }
-
-    /* Reasons Section */
-    .reasons-section {
-        padding: 5rem 0;
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    }
-
-    .reason-card {
-        text-align: center;
-        padding: 2.5rem 1.5rem;
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        border-radius: 16px;
-        backdrop-filter: blur(10px);
-        transition: all 0.3s ease;
-        height: 100%;
-    }
-
-    .reason-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-        border-color: var(--primary-color);
-    }
-
-    .reason-card i {
-        font-size: 3rem;
-        color: var(--primary-color);
-        margin-bottom: 1.5rem;
-        display: block;
-    }
-
-    .reason-card h6 {
-        font-size: 1.3rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        color: var(--text-light);
-    }
-
-    .reason-card p {
-        color: rgba(255, 255, 255, 0.8);
-        line-height: 1.6;
-    }
-
-    /* FAQ Section */
-    .faq-section {
-        padding: 5rem 0;
-        background: var(--text-dark);
-    }
-
-    .accordion {
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    .accordion-item {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        margin-bottom: 1rem;
-        border-radius: 12px;
-        overflow: hidden;
-    }
-
-    .accordion-button {
-        background: transparent;
-        color: var(--text-light);
-        border: none;
-        padding: 1.5rem;
-        font-weight: 600;
-        font-size: 1.1rem;
-    }
-
-    .accordion-button:not(.collapsed) {
-        background: rgba(229, 9, 20, 0.1);
-        color: var(--text-light);
-        box-shadow: none;
-    }
-
-    .accordion-button:focus {
-        box-shadow: 0 0 0 0.25rem rgba(229, 9, 20, 0.25);
-    }
-
-    .accordion-body {
-        background: rgba(255, 255, 255, 0.02);
-        color: rgba(255, 255, 255, 0.9);
-        padding: 1.5rem;
-        line-height: 1.6;
-    }
-
-    /* Mobile Responsive */
-    @media (max-width: 768px) {
-        .hero-title {
-            font-size: 3rem;
-        }
-        
-        .hero-movie-title {
-            font-size: 2.5rem;
-        }
-        
-        .section-title {
-            font-size: 2rem;
-        }
-        
-        .hero-buttons {
-            justify-content: center;
-        }
-        
-        .movie-card {
-            min-width: 220px;
-        }
-        
-        .reason-card {
-            margin-bottom: 2rem;
-        }
-    }
-</style>
-
-<%# Check if user is logged in %>
-
-    <%# Logged In User Hero %>
-    <section class="hero-logged">
-        <div class="container">
-            <div class="hero-movie-info">
-                <h1 class="hero-movie-title">Featured Tonight</h1>
-                <p class="hero-movie-desc">
-                    Discover the most talked-about movie of the week. A thrilling adventure that will keep you on the edge of your seat with stunning visuals and an incredible storyline.
-                </p>
-                <div class="hero-buttons">
-                    <button class="btn-play">
-                        <i class="bi bi-play-fill"></i>
-                        Play Now
-                    </button>
-                    <button class="btn-info">
-                        <i class="bi bi-info-circle"></i>
-                        More Info
-                    </button>
-                </div>
-            </div>
+<div class="bg-dark text-white" style="min-height: 100vh;">
+  <!-- Hero Section with First Featured Movie -->
+  <% if (featuredMovies && featuredMovies.length > 0) { %>
+  <div class="position-relative overflow-hidden" style="background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(20,20,20,1)), url('<%= featuredMovies[0].image || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920' %>') center/cover; min-height: 75vh;">
+    <div class="container py-5">
+      <div class="row align-items-center" style="min-height: 65vh;">
+        <div class="col-lg-6">
+          <h1 class="display-2 fw-bold mb-4" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.8);"><%= featuredMovies[0].title %></h1>
+          <h4 class="fw-semibold mb-3">Featured Tonight</h4>
+          <p class="lead mb-4 text-white-50"><%= featuredMovies[0].description || 'Discover the most talked-about movie of the week.' %></p>
+          <div class="d-flex gap-3 flex-wrap">
+            <button class="btn btn-light btn-lg d-flex align-items-center gap-2 px-4 py-2 fw-semibold" onclick="playMovie('<%= featuredMovies[0]._id %>')">
+              <i class="bi bi-play-fill fs-4"></i> Play Now
+            </button>
+            <button class="btn btn-secondary btn-lg d-flex align-items-center gap-2 px-4 py-2 fw-semibold" style="background: rgba(109, 109, 110, 0.7);" onclick="showInfo('<%= featuredMovies[0]._id %>')">
+              <i class="bi bi-info-circle"></i> More Info
+            </button>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
+  <% } %>
 
-    <%# Continue Watching Section %>
-    <section class="featured-section">
-        <div class="container">
-            <h2 class="section-title">Continue Watching</h2>
-            <div class="position-relative">
-                <button class="scroll-btn left" onclick="scrollContainer('continue-scroll', -300)">
-                    <i class="bi bi-chevron-left"></i>
-                </button>
-                <button class="scroll-btn right" onclick="scrollContainer('continue-scroll', 300)">
-                    <i class="bi bi-chevron-right"></i>
-                </button>
-                <div id="continue-scroll" class="movie-scroll-container">
-                    <div class="movie-card">
-                        <img src="https://images.unsplash.com/photo-1489599440656-7b4b1c42c8ad?w=300&h=200&fit=crop" alt="Movie">
-                        <div class="card-body">
-                            <h6>Action Hero</h6>
-                            <small>Action • 2024</small>
-                            <div class="progress mt-2" style="height: 4px;">
-                                <div class="progress-bar bg-danger" style="width: 60%"></div>
-                            </div>
-                            <small class="text-muted">60% watched</small>
-                        </div>
+  <!-- Popular on NetMovie -->
+  <div class="container py-5">
+    <h2 class="h4 mb-4 fw-bold" style="padding-left: 10px;">Popular on NetMovie</h2>
+    <div class="position-relative">
+      <div class="d-flex gap-4 overflow-auto pb-3 px-2" id="popularScroll" style="scroll-behavior: smooth; scrollbar-width: thin; padding-left: 10px; padding-right: 10px;">
+        <% if (featuredMovies && featuredMovies.length > 0) { %>
+          <% featuredMovies.forEach((movie, index) => { 
+            const imageUrl = movie.image || `https://images.unsplash.com/photo-${['1489599440656-7b4b1c42c8ad', '1485846234645-a62644f84728', '1626814026160-2237a95fc5a0', '1534447677768-be436bb09401', '1517604931442-7e0c8ed2963c', '1478720568477-152d9b164e26'][index % 6]}?w=300&h=300&fit=crop`;
+          %>
+            <a href="/movies/<%= movie._id %>" class="flex-shrink-0 text-decoration-none" style="width: 220px; cursor: pointer;">
+              <div class="position-relative movie-card" style="border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                <img src="<%= imageUrl %>" class="w-100" style="height: 320px; object-fit: cover; transition: transform 0.3s;" alt="<%= movie.title %>" onerror="this.src='https://images.unsplash.com/photo-1489599440656-7b4b1c42c8ad?w=300&h=300&fit=crop'">
+                <div class="position-absolute bottom-0 start-0 end-0 p-3" style="background: linear-gradient(to top, rgba(0,0,0,0.95), transparent); padding: 20px 15px !important;">
+                  <h6 class="mb-2 fw-semibold text-white" style="font-size: 1rem;"><%= movie.title %></h6>
+                  <small class="text-white-50" style="font-size: 0.875rem;"><%= movie.year || '2024' %></small>
+                  <% if (movie.progress) { %>
+                    <div class="progress mt-2" style="height: 4px; border-radius: 2px;">
+                      <div class="progress-bar bg-danger" style="width: <%= movie.progress %>%"></div>
                     </div>
-                    <div class="movie-card">
-                        <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?w=300&h=200&fit=crop" alt="Movie">
-                        <div class="card-body">
-                            <h6>Sci-Fi Adventure</h6>
-                            <small>Sci-Fi • 2024</small>
-                            <div class="progress mt-2" style="height: 4px;">
-                                <div class="progress-bar bg-danger" style="width: 25%"></div>
-                            </div>
-                            <small class="text-muted">25% watched</small>
-                        </div>
-                    </div>
+                  <% } %>
                 </div>
-            </div>
-        </div>
-    </section>
-    <%# Guest Hero Section %>
-   
+              </div>
+            </a>
+          <% }) %>
+        <% } else { %>
+          <p class="text-white-50">No movies available at the moment.</p>
+        <% } %>
+      </div>
+      <button class="btn btn-dark position-absolute top-50 start-0 translate-middle-y rounded-circle d-none d-lg-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: rgba(0,0,0,0.7) !important; backdrop-filter: blur(10px);" onclick="document.getElementById('popularScroll').scrollBy({left: -400, behavior: 'smooth'})">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <button class="btn btn-dark position-absolute top-50 end-0 translate-middle-y rounded-circle d-none d-lg-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: rgba(0,0,0,0.7) !important; backdrop-filter: blur(10px);" onclick="document.getElementById('popularScroll').scrollBy({left: 400, behavior: 'smooth'})">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </div>
 
-<%# Featured Movies Section %>
-<section class="featured-section">
+  <!-- Browse by Genre -->
+  <div class="container py-5">
+    <h2 class="h4 mb-4 fw-bold" style="padding-left: 10px;">Browse by Genre</h2>
+    <div class="position-relative">
+      <div class="d-flex gap-4 overflow-auto pb-3 px-2" id="genreScroll" style="scroll-behavior: smooth; scrollbar-width: thin; padding-left: 10px; padding-right: 10px;">
+        <% if (featuredMovies && featuredMovies.length > 0) { %>
+          <% featuredMovies.slice(0, 4).forEach((movie, index) => { 
+            const imageUrl = movie.image || `https://images.unsplash.com/photo-${['1534447677768-be436bb09401', '1517604931442-7e0c8ed2963c', '1478720568477-152d9b164e26', '1485846234645-a62644f84728'][index % 4]}?w=300&h=180&fit=crop`;
+          %>
+            <a href="/movies/<%= movie._id %>" class="flex-shrink-0 text-decoration-none" style="width: 300px; cursor: pointer;">
+              <div class="card bg-transparent border-0 text-white" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5); border-radius: 8px; overflow: hidden;">
+                <img src="<%= imageUrl %>" class="card-img-top" style="height: 200px; object-fit: cover; transition: transform 0.3s;" alt="<%= movie.title %>" onerror="this.src='https://images.unsplash.com/photo-1534447677768-be436bb09401?w=300&h=180&fit=crop'">
+                <div class="card-body" style="padding: 15px;">
+                  <h6 class="fw-semibold mb-2 text-white" style="font-size: 1rem;"><%= movie.title %></h6>
+                  <small class="text-white-50" style="font-size: 0.875rem;"><%= movie.year || '2024' %> <span class="ms-2">★★★★</span></small>
+                </div>
+              </div>
+            </a>
+          <% }) %>
+        <% } %>
+      </div>
+      <button class="btn btn-dark position-absolute top-50 start-0 translate-middle-y rounded-circle d-none d-lg-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: rgba(0,0,0,0.7) !important; backdrop-filter: blur(10px);" onclick="document.getElementById('genreScroll').scrollBy({left: -400, behavior: 'smooth'})">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <button class="btn btn-dark position-absolute top-50 end-0 translate-middle-y rounded-circle d-none d-lg-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: rgba(0,0,0,0.7) !important; backdrop-filter: blur(10px);" onclick="document.getElementById('genreScroll').scrollBy({left: 400, behavior: 'smooth'})">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Why Choose NetMovie -->
+  <div class="py-5" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
     <div class="container">
-        <h2 class="section-title">
-            <% if (typeof user !== 'undefined' && user) { %>
-                Recommended For You
-            <% } else { %>
-                Featured Movies
-            <% } %>
+      <h2 class="h3 mb-5 text-center fw-bold">Why Choose NetMovie?</h2>
+      <div class="row g-4">
+        <div class="col-lg-3 col-md-6">
+          <div class="card bg-transparent border border-secondary text-center p-4 h-100">
+            <i class="bi bi-film text-danger mb-3" style="font-size: 3rem;"></i>
+            <h6 class="fw-bold mb-3">Unlimited Content</h6>
+            <p class="small text-white-50 mb-0">Access thousands of movies and shows across all genres with new content added weekly.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="card bg-transparent border border-secondary text-center p-4 h-100">
+            <i class="bi bi-lightning-charge text-danger mb-3" style="font-size: 3rem;"></i>
+            <h6 class="fw-bold mb-3">Ultra-Fast Streaming</h6>
+            <p class="small text-white-50 mb-0">Experience buffer-free streaming with our advanced CDN technology and 4K quality.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="card bg-transparent border border-secondary text-center p-4 h-100">
+            <i class="bi bi-devices text-danger mb-3" style="font-size: 3rem;"></i>
+            <h6 class="fw-bold mb-3">Multi-Device Access</h6>
+            <p class="small text-white-50 mb-0">Watch on any device - phone, tablet, laptop, or smart TV. Your progress syncs everywhere.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="card bg-transparent border border-secondary text-center p-4 h-100">
+            <i class="bi bi-shield-check text-danger mb-3" style="font-size: 3rem;"></i>
+            <h6 class="fw-bold mb-3">Safe & Secure</h6>
+            <p class="small text-white-50 mb-0">Enjoy peace of mind with our secure platform and family-friendly content controls.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ Section -->
+  <div class="container py-5">
+    <h2 class="h3 mb-5 text-center fw-bold">Frequently Asked Questions</h2>
+    <div class="accordion accordion-flush mx-auto" id="faqAccordion" style="max-width: 800px;">
+      <div class="accordion-item border border-secondary rounded mb-2" style="background: rgba(255,255,255,0.05);">
+        <h2 class="accordion-header">
+          <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" style="background: transparent; color: white;">
+            How do I start watching movies on NetMovie?
+          </button>
         </h2>
-        
-        <div class="position-relative">
-            <button class="scroll-btn left" onclick="scrollContainer('movie-scroll', -300)">
-                <i class="bi bi-chevron-left"></i>
-            </button>
-            <button class="scroll-btn right" onclick="scrollContainer('movie-scroll', 300)">
-                <i class="bi bi-chevron-right"></i>
-            </button>
-            
-            <div id="movie-scroll" class="movie-scroll-container">
-                <% if (typeof featuredMovies !== 'undefined' && featuredMovies && featuredMovies.length > 0) { %>
-                    <% featuredMovies.forEach(function(movie) { %>
-                        <div class="movie-card" onclick="location.href='/movies/<%= movie._id %>'">
-                            <img src="<%= movie.thumbnailUrl %>" alt="<%= movie.title %>">
-                            <div class="card-body">
-                                <h6><%= movie.title %></h6>
-                                <small><%= movie.genre %> • <%= movie.year || '2024' %></small>
-                                <button class="btn" onclick="event.stopPropagation(); location.href='/movies/<%= movie._id %>'">
-                                    <i class="bi bi-play-fill"></i> Watch Now
-                                </button>
-                            </div>
-                        </div>
-                    <% }); %>
-                <% } else { %>
-                    <%# Sample movies when no data %>
-                    <div class="movie-card">
-                        <img src="https://images.unsplash.com/photo-1489599440656-7b4b1c42c8ad?w=300&h=200&fit=crop" alt="Movie">
-                        <div class="card-body">
-                            <h6>Epic Adventure</h6>
-                            <small>Adventure • 2024</small>
-                            <button class="btn">
-                                <i class="bi bi-play-fill"></i> Watch Now
-                            </button>
-                        </div>
-                    </div>
-                    <div class="movie-card">
-                        <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?w=300&h=200&fit=crop" alt="Movie">
-                        <div class="card-body">
-                            <h6>Space Thriller</h6>
-                            <small>Thriller • 2024</small>
-                            <button class="btn">
-                                <i class="bi bi-play-fill"></i> Watch Now
-                            </button>
-                        </div>
-                    </div>
-                    <div class="movie-card">
-                        <img src="https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=300&h=200&fit=crop" alt="Movie">
-                        <div class="card-body">
-                            <h6>Mystery Drama</h6>
-                            <small>Drama • 2024</small>
-                            <button class="btn">
-                                <i class="bi bi-play-fill"></i> Watch Now
-                            </button>
-                        </div>
-                    </div>
-                <% } %>
-            </div>
+        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+          <div class="accordion-body text-white-50" style="background: rgba(0,0,0,0.2);">
+            Simply sign up for a free account, browse our extensive movie collection, and click "Watch Now" to start streaming instantly in HD quality.
+          </div>
         </div>
-    </div>
-</section>
-
-<%# Reasons to Choose NetMovie %>
-<section class="reasons-section">
-    <div class="container">
-        <h2 class="section-title text-center">Why Choose NetMovie?</h2>
-        <div class="row g-4">
-            <div class="col-lg-3 col-md-6">
-                <div class="reason-card">
-                    <i class="bi bi-film"></i>
-                    <h6>Unlimited Content</h6>
-                    <p>Access thousands of movies and shows across all genres with new content added weekly.</p>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="reason-card">
-                    <i class="bi bi-lightning-charge"></i>
-                    <h6>Ultra-Fast Streaming</h6>
-                    <p>Experience buffer-free streaming with our advanced CDN technology and 4K quality.</p>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="reason-card">
-                    <i class="bi bi-devices"></i>
-                    <h6>Multi-Device Access</h6>
-                    <p>Watch on any device - phone, tablet, laptop, or smart TV. Your progress syncs everywhere.</p>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="reason-card">
-                    <i class="bi bi-shield-check"></i>
-                    <h6>Safe & Secure</h6>
-                    <p>Enjoy peace of mind with our secure platform and family-friendly content controls.</p>
-                </div>
-            </div>
+      </div>
+      <div class="accordion-item border border-secondary rounded mb-2" style="background: rgba(255,255,255,0.05);">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" style="background: transparent; color: white;">
+            Is NetMovie completely free?
+          </button>
+        </h2>
+        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body text-white-50" style="background: rgba(0,0,0,0.2);">
+            Yes! NetMovie offers a vast library of free content. We also have premium subscriptions for exclusive content and ad-free viewing.
+          </div>
         </div>
-    </div>
-</section>
-
-<%# FAQ Section %>
-<section class="faq-section">
-    <div class="container">
-        <h2 class="section-title text-center">Frequently Asked Questions</h2>
-        
-        <div class="accordion" id="faqAccordion">
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="faqHeadingOne">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseOne" aria-expanded="true">
-                        How do I start watching movies on NetMovie?
-                    </button>
-                </h2>
-                <div id="faqCollapseOne" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-                    <div class="accordion-body">
-                        Simply sign up for a free account, browse our extensive movie collection, and click "Watch Now" to start streaming instantly in HD quality.
-                    </div>
-                </div>
-            </div>
-
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="faqHeadingTwo">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseTwo">
-                        Is NetMovie completely free?
-                    </button>
-                </h2>
-                <div id="faqCollapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                    <div class="accordion-body">
-                        Yes! NetMovie offers a vast library of free content. We also have premium subscriptions for exclusive content and ad-free viewing experience.
-                    </div>
-                </div>
-            </div>
-
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="faqHeadingThree">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseThree">
-                        Can I watch on multiple devices?
-                    </button>
-                </h2>
-                <div id="faqCollapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                    <div class="accordion-body">
-                        Absolutely! Your NetMovie account works on all devices - smartphones, tablets, computers, and smart TVs. Your watchlist and progress sync across all devices.
-                    </div>
-                </div>
-            </div>
-
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="faqHeadingFour">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseFour">
-                        Do you offer offline downloads?
-                    </button>
-                </h2>
-                <div id="faqCollapseFour" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                    <div class="accordion-body">
-                        Offline downloads are available for premium subscribers. Download your favorite movies and shows to watch anywhere, even without an internet connection.
-                    </div>
-                </div>
-            </div>
+      </div>
+      <div class="accordion-item border border-secondary rounded mb-2" style="background: rgba(255,255,255,0.05);">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" style="background: transparent; color: white;">
+            Can I watch on multiple devices?
+          </button>
+        </h2>
+        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body text-white-50" style="background: rgba(0,0,0,0.2);">
+            Absolutely! Your NetMovie account works on all devices - smartphones, tablets, computers, and smart TVs.
+          </div>
         </div>
+      </div>
+      <div class="accordion-item border border-secondary rounded mb-2" style="background: rgba(255,255,255,0.05);">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq4" style="background: transparent; color: white;">
+            Do you offer offline downloads?
+          </button>
+        </h2>
+        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body text-white-50" style="background: rgba(0,0,0,0.2);">
+            Offline downloads are available for premium subscribers. Download your favorite movies and shows to watch anywhere.
+          </div>
+        </div>
+      </div>
     </div>
-</section>
+  </div>
+</div>
+
+<style>
+.accordion-button:not(.collapsed) {
+  background: rgba(229, 9, 20, 0.1) !important;
+  color: white !important;
+}
+.accordion-button:focus {
+  box-shadow: none;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.accordion-button::after {
+  filter: invert(1);
+}
+.flex-shrink-0:hover img, a:hover img {
+  transform: scale(1.05);
+}
+.movie-card {
+  transition: all 0.3s ease;
+}
+a.flex-shrink-0:hover .movie-card {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.7) !important;
+}
+a.flex-shrink-0:hover .card {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.7) !important;
+}
+#popularScroll::-webkit-scrollbar,
+#genreScroll::-webkit-scrollbar {
+  height: 8px;
+}
+#popularScroll::-webkit-scrollbar-track,
+#genreScroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+#popularScroll::-webkit-scrollbar-thumb,
+#genreScroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+#popularScroll::-webkit-scrollbar-thumb:hover,
+#genreScroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+</style>
 
 <script>
-    function scrollContainer(containerId, scrollAmount) {
-        const container = document.getElementById(containerId);
-        if (container) {
-            container.scrollBy({
-                left: scrollAmount,
-                behavior: 'smooth'
-            });
-        }
-    }
+function playMovie(movieId) {
+  window.location.href = '/movies/' + movieId + '/play';
+}
 
-    function updateScrollButtons() {
-        const containers = document.querySelectorAll('.movie-scroll-container');
-        containers.forEach(function(container) {
-            const leftBtn = container.parentElement.querySelector('.scroll-btn.left');
-            const rightBtn = container.parentElement.querySelector('.scroll-btn.right');
-            
-            if (leftBtn && rightBtn) {
-                leftBtn.style.opacity = container.scrollLeft > 0 ? '1' : '0.5';
-                rightBtn.style.opacity = 
-                    container.scrollLeft < (container.scrollWidth - container.clientWidth) ? '1' : '0.5';
-            }
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const containers = document.querySelectorAll('.movie-scroll-container');
-        containers.forEach(function(container) {
-            container.addEventListener('scroll', updateScrollButtons);
-        });
-        updateScrollButtons();
-
-        const movieCards = document.querySelectorAll('.movie-card');
-        movieCards.forEach(function(card, index) {
-            card.style.animationDelay = (index * 0.1) + 's';
-            card.classList.add('animate-in');
-        });
-    });
+function showInfo(movieId) {
+  window.location.href = '/movies/' + movieId;
+}
 </script>
-
-<style>
-    .animate-in {
-        animation: fadeInUp 0.6s ease-out forwards;
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    @keyframes fadeInUp {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-</style>
